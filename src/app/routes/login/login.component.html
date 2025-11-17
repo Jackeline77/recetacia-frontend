@@ -1,0 +1,126 @@
+<div class="flex min-h-screen bg-[#eeeec3]">
+  <div class="w-full md:w-1/2 flex flex-col px-10 py-12">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <!-- LOGO -->
+      <img
+        src="logo_sin_letra.png"
+        alt="Your Company"
+        class="mx-40 h-40 mx-auto"
+      />
+
+      <h2
+        class="mt-5 text-center text-5xl font-bold tracking-tight text-lime-600"
+      >
+        Recetacia
+      </h2>
+
+      <button
+        class="mt-3 text-indigo-400 hover:text-amber-600 text-sm text-primary-600"
+        (click)="goBack()"
+      >
+        ← Volver
+      </button>
+    </div>
+
+    <div
+      class="bg-stone-50 p-8 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded-xl shadow-lg"
+    >
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-2">
+        <!-- EMAIL -->
+        <div>
+          <label class="block text-sm font-medium text-primary-600"
+            >Email address</label
+          >
+          <div class="mt-2">
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              class="block w-full rounded-xl px-3 py-2 text-base text-gray-800 outline-none border border-lime-600 placeholder:text-gray-500 focus:border-lime-600 focus:ring-1 focus:ring-lime-600 transition"
+              [class.border-red-500]="email?.invalid && email?.touched"
+            />
+          </div>
+
+          <p
+            class="text-red-500 text-sm mt-1"
+            *ngIf="email?.invalid && email?.touched"
+          >
+            <span *ngIf="email?.errors?.['required']"
+              >El email es requerido</span
+            >
+            <span *ngIf="email?.errors?.['email']"
+              >Formato de email inválido</span
+            >
+          </p>
+        </div>
+
+        <!-- PASSWORD -->
+        <div>
+          <label class="block text-sm font-medium text-primary-600"
+            >Password</label
+          >
+          <div class="mt-2">
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              autocomplete="current-password"
+              class="block w-full rounded-xl px-3 py-2 text-base text-gray-800 outline-none border border-lime-600 placeholder:text-gray-500 focus:border-lime-600 focus:ring-1 focus:ring-lime-600 transition"
+              [class.border-red-500]="password?.invalid && password?.touched"
+            />
+          </div>
+
+          <p
+            class="text-red-500 text-sm mt-1"
+            *ngIf="password?.invalid && password?.touched"
+          >
+            <span *ngIf="password?.errors?.['required']"
+              >La contraseña es requerida</span
+            >
+            <span *ngIf="password?.errors?.['minlength']"
+              >Mínimo 6 caracteres</span
+            >
+          </p>
+        </div>
+
+        <div
+          class="bg-red-500/20 text-red-600 px-4 py-2 rounded-md text-sm"
+          *ngIf="errorMessage"
+        >
+          {{ errorMessage }}
+        </div>
+
+        <button
+          type="submit"
+          class="flex w-full justify-center rounded-xl bg-lime-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-600 active:bg-lime-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-700"
+          [disabled]="isLoading"
+        >
+          <span *ngIf="!isLoading">Iniciar sesión</span>
+          <span *ngIf="isLoading">Cargando...</span>
+        </button>
+      </form>
+
+      <p class="mt-10 text-center text-sm text-gray-500">
+        ¿No tienes cuenta?
+        <a
+          routerLink="/register"
+          class="font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Regístrate
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA: IMAGEN -->
+  <div
+    class="hidden md:flex w-1/2 h-screen items-center justify-center p-0 m-0 inset-0"
+  >
+    <img
+      src="fondo_app.png"
+      alt="Login Image"
+      class="object-cover w-full h-full rounded-none"
+    />
+  </div>
+</div>

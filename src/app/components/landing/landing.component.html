@@ -1,0 +1,471 @@
+<body>
+  <div class="card">
+    <p-menubar>
+      <ng-template #start>
+        <img class="w-20 h-15" src="logo_sin_letra.png" />
+        <p class="text-2xl font-bold text-primary-600">Recetacia</p>
+      </ng-template>
+      <ng-template #end>
+        <div class="flex items-center gap-3">
+          <div class="card flex justify-center">
+            <p-menu #menu [model]="items" [popup]="true" />
+            <p-button
+              icon="pi pi-comments"
+              aria-label="Language"
+              [rounded]="true"
+              [text]="true"
+              [raised]="true"
+              (click)="menu.toggle($event)"
+            />
+          </div>
+          <p-button
+            [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+            aria-label="Sun"
+            [rounded]="true"
+            [text]="true"
+            [raised]="true"
+            (click)="toggleDarkMode()"
+          />
+          <button
+            pButton
+            pRipple
+            severity="success"
+            label="Login"
+            icon="pi pi-user"
+            (click)="openLogin()"
+          ></button>
+        </div>
+      </ng-template>
+    </p-menubar>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL DEL LANDING -->
+
+  <div class="relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
+    <img
+      src="pag_1.png"
+      alt=""
+      class="absolute inset-0 -z-10 size-full object-cover object-right md:object-center opacity-80"
+    />
+    <div
+      aria-hidden="true"
+      class="hidden sm:absolute sm:-top-10 sm:right-1/2 sm:-z-10 sm:mr-10 sm:block sm:transform-gpu sm:blur-3xl"
+    >
+      <div
+        style="
+          clip-path: polygon(
+            74.1% 44.1%,
+            100% 61.6%,
+            97.5% 26.9%,
+            85.5% 0.1%,
+            80.7% 2%,
+            72.5% 32.5%,
+            60.2% 62.4%,
+            52.4% 68.1%,
+            47.5% 58.3%,
+            45.2% 34.5%,
+            27.5% 76.7%,
+            0.1% 64.9%,
+            17.9% 100%,
+            27.6% 76.8%,
+            76.1% 97.7%,
+            74.1% 44.1%
+          );
+        "
+        class="aspect-1097/845 w-274.25 bg-linear-to-tr from-[#ff4694] to-[#809408] opacity-20"
+      ></div>
+    </div>
+    <div
+      aria-hidden="true"
+      class="absolute -top-52 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:-top-112 sm:ml-16 sm:translate-x-0"
+    >
+      <div
+        style="
+          clip-path: polygon(
+            74.1% 44.1%,
+            100% 61.6%,
+            97.5% 26.9%,
+            85.5% 0.1%,
+            80.7% 2%,
+            72.5% 32.5%,
+            60.2% 62.4%,
+            52.4% 68.1%,
+            47.5% 58.3%,
+            45.2% 34.5%,
+            27.5% 76.7%,
+            0.1% 64.9%,
+            17.9% 100%,
+            27.6% 76.8%,
+            76.1% 97.7%,
+            74.1% 44.1%
+          );
+        "
+        class="aspect-1097/845 w-274.25 bg-linear-to-tr from-[#ff4694] to-[#809408] opacity-20"
+      ></div>
+    </div>
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 rounded-xl p-10">
+      <div class="mx-auto max-w-2xl lg:mx-0 text-gray-900">
+        <h2
+          class="text-5xl font-semibold tracking-tight sm:text-7xl text-green-50"
+        >
+          Convierte una foto en una receta deliciosa
+        </h2>
+        <p
+          class="mt-8 text-lg font-medium text-pretty text-justify sm:text-xl/8"
+        >
+          Solo toma una foto de cualquier plato o ingrediente, y nuestra
+          inteligencia artificial generará recetas detalladas, fáciles de
+          preparar y adaptadas a tus gustos. Cocina sin complicaciones y
+          descubre nuevas ideas con un solo clic.
+        </p>
+      </div>
+      <div class="mt-16 sm:mt-20 rounded-xl p-8">
+        <!-- GRID DE 4 BLOQUES -->
+        <div
+          class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 text-white font-semibold"
+        >
+          <!-- BLOQUE 1 -->
+          <div class="space-y-4">
+            <a href="#" class="text-base/7"
+              >Probar ahora <span aria-hidden="true">&rarr;</span></a
+            >
+
+            <div class="bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm">
+              <div class="flex flex-col-reverse gap-1">
+                <dt class="text-base/7 text-gray-300">Recetas generadas</dt>
+                <dd class="text-4xl font-semibold tracking-tight text-white">
+                  15.000+
+                </dd>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 2 -->
+          <div class="space-y-4">
+            <a href="#" class="text-base/7"
+              >Cómo funciona <span aria-hidden="true">&rarr;</span></a
+            >
+
+            <div class="bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm">
+              <div class="flex flex-col-reverse gap-1">
+                <dt class="text-base/7 text-gray-300">Usuarios felices</dt>
+                <dd class="text-4xl font-semibold tracking-tight text-white">
+                  8.000+
+                </dd>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 3 -->
+          <div class="space-y-4">
+            <a href="#" class="text-base/7"
+              >Recetas populares <span aria-hidden="true">&rarr;</span></a
+            >
+
+            <div class="bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm">
+              <div class="flex flex-col-reverse gap-1">
+                <dt class="text-base/7 text-gray-300">
+                  Fotos analizadas cada día
+                </dt>
+                <dd class="text-4xl font-semibold tracking-tight text-white">
+                  2.500+
+                </dd>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 4 -->
+          <div class="space-y-4">
+            <a href="#" class="text-base/7"
+              >Nuestra tecnología <span aria-hidden="true">&rarr;</span></a
+            >
+
+            <div class="bg-gray-900/40 rounded-xl p-4 backdrop-blur-sm">
+              <div class="flex flex-col-reverse gap-1">
+                <dt class="text-base/7 text-gray-300">Tiempo por receta</dt>
+                <dd class="text-4xl font-semibold tracking-tight text-white">
+                  3 seg
+                </dd>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="card flex flex-col items-center overflow-hidden">
+      <div class="h-[10rem]"></div>
+
+      <!-- SECCIÓN 1: TIPOS DE USUARIO -->
+      <div class="flex flex-wrap justify-center gap-8">
+        <!-- Individual -->
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 slide-in-from-l-8 animate-duration-1000"
+          leaveClass="animate-leave fade-out-0"
+          class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-user !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">Para ti</span>
+          <span class="text-muted-color text-center"
+            >Genera recetas personalizadas tomando una simple foto de tu
+            comida.</span
+          >
+        </div>
+
+        <!-- Equipo -->
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 animate-duration-1000"
+          leaveClass="animate-leave fade-out-0"
+          class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-users !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">Familias</span>
+          <span class="text-muted-color text-center"
+            >Descubran juntos nuevas ideas para cocinar según lo que tengan en
+            casa.</span
+          >
+        </div>
+
+        <!-- Enterprise -->
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 slide-in-from-r-8 animate-duration-1000"
+          leaveClass="animate-leave fade-out-0"
+          class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full bg-primary text-primary-contrast w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-building !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">Restaurantes</span>
+          <span class="text-muted-color text-center"
+            >Obtén sugerencias creativas basadas en ingredientes
+            disponibles.</span
+          >
+        </div>
+      </div>
+
+      <div class="h-[10rem]"></div>
+
+      <!-- SECCIÓN 2: TESTIMONIOS -->
+      <div class="flex flex-wrap justify-center gap-8">
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000"
+          class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <p-avatar
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+            shape="circle"
+            size="xlarge"
+          />
+          <span class="text-2xl font-medium">Jenna Thompson</span>
+          <span class="text-muted-color text-center"
+            >“Solo le tomé una foto a mi almuerzo y obtuve tres recetas fáciles.
+            ¡Magia!”</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 slide-in-from-b-20 animate-duration-1000"
+          class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <p-avatar
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png"
+            shape="circle"
+            size="xlarge"
+          />
+          <span class="text-2xl font-medium">Isabel Garcia</span>
+          <span class="text-muted-color text-center"
+            >“Lo uso todos los días para aprovechar los ingredientes que quedan
+            en la nevera.”</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 slide-in-from-t-20 animate-duration-1000"
+          class="flex flex-col border border-primary-200 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <p-avatar
+            image="https://primefaces.org/cdn/primeng/images/demo/avatar/onyamalimba.png"
+            shape="circle"
+            size="xlarge"
+          />
+          <span class="text-2xl font-medium">Xavier Mason</span>
+          <span class="text-muted-color text-center"
+            >“Ideal para quienes no saben qué cocinar. Una foto y listo.”</span
+          >
+        </div>
+      </div>
+
+      <div class="h-[10rem]"></div>
+
+      <!-- SECCIÓN 3: NÚMEROS -->
+      <div class="flex flex-wrap justify-center gap-8">
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 spin-in-45 slide-in-from-t-12 animate-duration-1000"
+          class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2"
+            >850K</span
+          >
+          <span class="text-2xl font-bold">Fotos analizadas</span>
+          <span class="text-center"
+            >Miles de usuarios confían en nuestra IA para cocinar mejor.</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll="{ enterClass: 'animate-enter fade-in-10 zoom-in-50 slide-in-from-t-20 animate-duration-1000' }"
+          class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2"
+            >1.5M</span
+          >
+          <span class="text-2xl font-bold">Recetas generadas</span>
+          <span class="text-center"
+            >Cada plato inspira varias recetas únicas basadas en tus
+            gustos.</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 spin-in-[-45deg] slide-in-from-t-16 animate-duration-1000"
+          class="flex flex-col bg-primary text-primary-contrast border-primary shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <span class="bg-white/20 text-xl font-medium rounded-xl px-4 py-2"
+            >140K</span
+          >
+          <span class="text-2xl font-bold">Ingredientes detectados</span>
+          <span class="text-center"
+            >Tu foto se analiza para identificar alimentos con precisión.</span
+          >
+        </div>
+      </div>
+
+      <div class="h-[10rem]"></div>
+
+      <!-- SECCIÓN 4: FUNCIONALIDADES -->
+      <div class="flex flex-wrap justify-center gap-8">
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 zoom-in-50 animate-duration-1000"
+          class="flex flex-col bg-purple-500 text-white border-purple-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-wifi !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">IA Instantánea</span>
+          <span class="text-center"
+            >Tu receta aparece en segundos después de subir la imagen.</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 zoom-in-75 animate-duration-1000"
+          class="flex flex-col bg-teal-500 text-white border-teal-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-database !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">Miles de recetas</span>
+          <span class="text-center"
+            >Nuestra base de datos permite crear platos variados y
+            creativos.</span
+          >
+        </div>
+
+        <div
+          pAnimateOnScroll
+          enterClass="animate-enter fade-in-10 zoom-in-50 animate-duration-1000"
+          class="flex flex-col bg-indigo-500 text-white border-indigo-500 shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
+        >
+          <div
+            class="rounded-full border-2 border-white w-12 h-12 flex items-center justify-center"
+          >
+            <i class="pi pi-arrows-v !text-2xl"></i>
+          </div>
+
+          <span class="text-2xl font-bold">Opciones personalizadas</span>
+          <span class="text-center"
+            >Ajusta la receta según calorías, dificultad o tiempo
+            disponible.</span
+          >
+        </div>
+      </div>
+    </div>
+  </main>
+
+<div class="p-6 bg-green-100 mt-10">
+  <div class="flex gap-6">
+    
+    <div class="flex-2 footer-section mt-4">
+      <div class="flex items-center gap-3 mb-4">
+        <img class="w-35 h-20" src="logo_sin_letra.png" alt="Logo" />
+        <p class="text-3xl font-bold text-primary-600">Recetacia</p>
+      </div>
+      <p class="text-justify mb-4">
+        Guarda y accede fácilmente a tus recetas favoritas.
+      </p>
+      <div class="flex gap-3 mt-4">
+        <i class="pi pi-instagram text-xl"></i>
+        <i class="pi pi-twitter text-xl"></i>
+        <i class="pi pi-facebook text-xl"></i>
+      </div>
+    </div>
+
+    <!-- Columna 2: Enlaces -->
+    <div class="flex-1 footer-section">
+      <h4 class="font-semibold mb-2">Enlaces</h4>
+      <ul class="space-y-1">
+        <li>Inicio</li>
+        <li>Categorías</li>
+        <li>Buscar</li>
+      </ul>
+    </div>
+
+    <!-- Columna 3: Cuenta -->
+    <div class="flex-1 footer-section">
+      <h4 class="font-semibold mb-2">Cuenta</h4>
+      <ul class="space-y-1">
+        <li>Mi perfil</li>
+        <li>Añadir receta</li>
+        <li>Contacto</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mt-6 text-center font-bold bg-green-100">
+    © 2025 MisRecetApp. Todos los derechos reservados.<br />
+    Términos y condiciones | Política de privacidad
+  </div>
+</div>
+
+</body>
