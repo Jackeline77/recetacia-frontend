@@ -1,42 +1,45 @@
- <div class="fixed inset-0 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center z-50">
-      <div class="text-center">
-        <!-- Logo o nombre de la app -->
-        <div class="mb-8">
-          <h1 class="text-5xl font-bold text-white mb-2 animate-fade-in">
-            {{ appName }}
-          </h1>
-          <p class="text-purple-200 text-lg animate-fade-in-delay">
-            {{ subtitle }}
-          </p>
-        </div>
+<div
+  class="fixed inset-0 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center z-50"
+>
+  <div class="text-center">
+    <!-- Logo o nombre de la app -->
+    <div class="mb-8">
+      <h1 class="text-5xl font-bold text-white mb-2 animate-fade-in">
+        {{ appName }}
+      </h1>
+      <p class="text-purple-200 text-lg animate-fade-in-delay">
+        {{ subtitle }}
+      </p>
+    </div>
 
-        <!-- Spinner animado -->
-        <div class="mb-8 animate-bounce-slow">
-          <p-progressSpinner 
-            styleClass="w-20 h-20"
-            strokeWidth="4"
-            fill="transparent"
-            animationDuration="1s">
-          </p-progressSpinner>
-        </div>
+    <!-- Spinner animado -->
+    <div class="mb-8 animate-bounce-slow">
+      <p-progressSpinner
+        styleClass="w-20 h-20"
+        strokeWidth="4"
+        fill="transparent"
+        animationDuration="1s"
+      >
+      </p-progressSpinner>
+    </div>
 
-        <!-- Mensaje de carga -->
-        <div class="text-white text-lg font-medium animate-pulse">
-          {{ loadingMessage }}
-        </div>
+    <!-- Mensaje de carga -->
+    <div class="text-white text-lg font-medium animate-pulse">
+      {{ loadingMessage }}
+    </div>
 
-        <!-- Barra de progreso decorativa -->
-        <div class="mt-8 max-w-xs mx-auto">
-          <div class="h-1 bg-white/20 rounded-full overflow-hidden">
-            <div class="h-full bg-white rounded-full animate-loading-bar"></div>
-          </div>
-        </div>
-
-        <!-- Iconos decorativos -->
-        <div class="mt-12 flex justify-center gap-6 text-white/30">
-          <i class="pi pi-spin pi-spinner text-3xl"></i>
-          <i class="pi pi-spin pi-cog text-3xl animation-delay-200"></i>
-          <i class="pi pi-spin pi-sync text-3xl animation-delay-400"></i>
-        </div>
+    <!-- Barra de progreso decorativa -->
+    <div class="mt-8 max-w-xs mx-auto">
+      <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+        <div class="h-full bg-white rounded-full animate-loading-bar"></div>
       </div>
     </div>
+
+    <!-- Iconos decorativos -->
+    <div class="mt-12 flex justify-center gap-6 text-white/30">
+      <i class="pi pi-spin pi-spinner text-3xl"></i>
+      <i class="pi pi-spin pi-cog text-3xl animation-delay-200"></i>
+      <i class="pi pi-spin pi-sync text-3xl animation-delay-400"></i>
+    </div>
+  </div>
+</div>
