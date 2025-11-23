@@ -63,13 +63,6 @@ export const routes: Routes = [
           ).then((m) => m.DashboardHomeComponent),
       },
       {
-        path: 'generate',
-        loadComponent: () =>
-          import('./components/generate/generate.component').then(
-            (m) => m.GenerateComponent
-          ),
-      },
-      {
         path: 'history',
         loadComponent: () =>
           import(

@@ -17,6 +17,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ButtonModule } from 'primeng/button';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -97,7 +98,11 @@ export class RegisterComponent {
     }
   ];
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService 
+  ) {
     this.registerForm = this.createForm();
   }
 
@@ -169,29 +174,46 @@ export class RegisterComponent {
     this.router.navigate(['/landing']);
   }
 
-  onSubmit() {
-    this.markAllFieldsAsTouched();
-    this.errorMessage = '';
+onSubmit() {
+  this.markAllFieldsAsTouched();
+  this.errorMessage = '';
 
-    if (this.registerForm.invalid) {
-      return;
-    }
-
-    this.isLoading = true;
-
-    setTimeout(() => {
-      console.log('Usuario registrado:', this.registerForm.value);
-      const success = Math.random() > 0.2;
-
-      if (success) {
-        this.isLoading = false;
-        this.router.navigate(['/login']);
-      } else {
-        this.isLoading = false;
-        this.errorMessage = 'Error al registrar usuario. Inténtalo de nuevo.';
-      }
-    }, 1500);
+  if (this.registerForm.invalid) {
+    return;
   }
+
+  this.isLoading = true;
+
+  // USAR EL AUTH SERVICE REAL
+  const userData = {
+    name: this.registerForm.value.name,
+    email: this.registerForm.value.email,
+    password: this.registerForm.value.password
+  };
+
+  this.authService.register(userData).subscribe({
+    next: (response) => {
+      console.log('✅ Registro exitoso', response);
+      this.isLoading = false;
+      // El AuthService ya guarda el token automáticamente
+      this.router.navigate(['/dashboard']);
+    },
+    error: (error) => {
+      console.error('❌ Error en registro:', error);
+      this.isLoading = false;
+      
+      if (error.status === 400) {
+        this.errorMessage = 'El email ya está registrado';
+      } else if (error.status === 500) {
+        this.errorMessage = 'Error del servidor. Intenta más tarde';
+      } else if (error.status === 0) {
+        this.errorMessage = 'No se puede conectar al servidor';
+      } else {
+        this.errorMessage = error.error?.message || 'Error al registrar usuario';
+      }
+    }
+  });
+}
 
   onReset() {
     this.errorMessage = '';

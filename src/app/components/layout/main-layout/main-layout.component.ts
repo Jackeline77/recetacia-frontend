@@ -44,11 +44,6 @@ export class MainLayoutComponent implements OnInit {
       route: '/dashboard'
     },
     {
-      label: 'Generar Recetas',
-      icon: 'pi pi-sparkles',
-      route: '/dashboard/generate'
-    },
-    {
       label: 'Historial',
       icon: 'pi pi-history',
       route: '/dashboard/history',
@@ -63,25 +58,6 @@ export class MainLayoutComponent implements OnInit {
       label: 'Mis Recetas',
       icon: 'pi pi-book',
       route: '/dashboard/recipes'
-    }
-  ];
-
-  // Menú de usuario (configuración, perfil, etc.)
-  userMenuItems: CustomMenuItem[] = [
-    {
-      label: 'Configuración',
-      icon: 'pi pi-cog',
-      route: '/dashboard/settings'
-    },
-    {
-      label: 'Perfil',
-      icon: 'pi pi-user',
-      route: '/dashboard/profile'
-    },
-    {
-      label: 'Ayuda',
-      icon: 'pi pi-question-circle',
-      route: '/dashboard/help'
     }
   ];
 
