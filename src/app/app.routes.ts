@@ -39,6 +39,13 @@ export const routes: Routes = [
         (m) => m.TestLoadingComponent
       ),
   },
+  {
+    path: 'api-test',
+    loadComponent: () =>
+      import('./components/api-test/api-test.component').then(
+        (m) => m.ApiTestComponent
+      ),
+  },
   // RUTAS PROTEGIDAS CON LAYOUT
   {
     path: 'dashboard',
@@ -46,7 +53,7 @@ export const routes: Routes = [
       import('./components/layout/main-layout/main-layout.component').then(
         (m) => m.MainLayoutComponent
       ),
-    //canActivate: [authGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -54,14 +61,14 @@ export const routes: Routes = [
           import(
             './components/dashboard/dashboard-home/dashboard-home.component'
           ).then((m) => m.DashboardHomeComponent),
-      },      
+      },
       {
         path: 'generate',
         loadComponent: () =>
           import('./components/generate/generate.component').then(
             (m) => m.GenerateComponent
           ),
-      },      
+      },
       {
         path: 'history',
         loadComponent: () =>
@@ -89,7 +96,7 @@ export const routes: Routes = [
           import('./components/recipes/recipes.component').then(
             (m) => m.RecipesComponent
           ),
-      },/*
+      } /*
       {
         path: 'settings',
         loadComponent: () =>
@@ -103,7 +110,7 @@ export const routes: Routes = [
           import('./components/help/help.component').then(
             (m) => m.HelpComponent
           ),
-      },*/
+      },*/,
     ],
   },
   {

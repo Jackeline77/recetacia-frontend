@@ -19,6 +19,7 @@
     "@angular/router": "^19.2.0",
     "@primeng/themes": "^19.1.4",
     "@tailwindcss/postcss": "^4.1.17",
+    "chart.js": "^4.5.1",
     "motion": "^12.23.24",
     "postcss": "^8.5.6",
     "primeicons": "^7.0.0",

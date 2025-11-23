@@ -9,13 +9,16 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { loadingInterceptor } from './interceptors/loading.interceptor';
+import { MessageService, ConfirmationService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: 'API_URL', useValue: 'http://localhost:3000/api' },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor,loadingInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, loadingInterceptor])),
+    MessageService,
+    ConfirmationService,
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {

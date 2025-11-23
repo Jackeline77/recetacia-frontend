@@ -1,9 +1,106 @@
 <div class="p-6">
-      <h1 class="text-3xl font-bold text-gray-800 mb-6">
-        <i class="pi pi-star-fill mr-2 text-yellow-500"></i>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+        <i class="pi pi-star-fill text-yellow-500"></i>
         Mis Favoritos
       </h1>
-      <p-card>
-        <p class="text-gray-600">Lista de recetas favoritas - Por implementar</p>
+      <p class="text-gray-600">
+        Recetas que has marcado como favoritas ({{ favoriteItems.length }})
+      </p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="animate-pulse">
+        <div class="bg-white rounded-xl h-96 shadow-lg"></div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && favoriteItems.length === 0" class="text-center py-20 bg-white rounded-xl shadow-lg">
+      <div class="mb-6">
+        <i class="pi pi-star text-8xl text-gray-300"></i>
+      </div>
+      <h3 class="text-2xl font-semibold text-gray-600 mb-2">
+        No tienes favoritos todavía
+      </h3>
+      <p class="text-gray-500 mb-6">
+        Marca tus recetas favoritas desde el historial
+      </p>
+      <p-button label="Ir al Historial" icon="pi pi-history" (onClick)="goToHistory()">
+      </p-button>
+    </div>
+
+    <!-- Favorites Grid -->
+    <div *ngIf="!isLoading && favoriteItems.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <p-card *ngFor="let item of favoriteItems" class="favorite-card hover:shadow-2xl transition-all duration-300">
+
+        <!-- Image with Star Badge -->
+        <div class="relative mb-4 rounded-lg overflow-hidden group">
+          <img [src]="item.imageUrl" [alt]="'Favorito generado el ' + (item.createdAt | date)"
+            class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+
+          <!-- Star Badge -->
+          <div class="absolute top-2 right-2 bg-yellow-400 text-white p-3 rounded-full shadow-lg animate-pulse">
+            <i class="pi pi-star-fill text-xl"></i>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+          <i class="pi pi-calendar"></i>
+          <span>{{ item.createdAt | date:'medium' }}</span>
+        </div>
+
+        <!-- Recipes Count -->
+        <div class="mb-4">
+          <p-tag [value]="item.generation.recetas.length + ' Recetas'" severity="success" icon="pi pi-book">
+          </p-tag>
+        </div>
+
+        <!-- Recipe Names -->
+        <div class="mb-4">
+          <h4 class="font-semibold text-gray-700 mb-2">Recetas:</h4>
+          <ul class="space-y-1">
+            <li *ngFor="let receta of item.generation.recetas" class="text-sm text-gray-600 flex items-start">
+              <i class="pi pi-check text-green-500 mr-2 mt-1 flex-shrink-0"></i>
+              <span class="line-clamp-1">{{ receta.nombre }}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2 flex-wrap">
+          <p-button label="Ver Detalles" icon="pi pi-eye" (onClick)="viewDetails(item.id)"
+            styleClass="p-button-sm flex-1">
+          </p-button>
+
+          <p-button icon="pi pi-star-fill" (onClick)="removeFavorite(item)" [pTooltip]="'Quitar de favoritos'"
+            severity="danger" styleClass="p-button-sm">
+          </p-button>
+        </div>
       </p-card>
     </div>
+
+    <!-- Stats -->
+    <div *ngIf="favoriteItems.length > 0"
+      class="mt-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-xl p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold mb-1">
+            {{ favoriteItems.length }} Recetas Favoritas
+          </h3>
+          <p class="text-yellow-100">
+            {{ totalRecipes }} recetas en total guardadas
+          </p>
+        </div>
+        <i class="pi pi-heart-fill text-6xl opacity-20"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

@@ -13,12 +13,9 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <!-- Card 1: Total Recetas -->
     <div
-      class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
-    >
+      class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div
-          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
-        >
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
           <i class="pi pi-book text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ totalRecipes }}</span>
@@ -31,12 +28,9 @@
 
     <!-- Card 2: Favoritos -->
     <div
-      class="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
-    >
+      class="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div
-          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
-        >
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
           <i class="pi pi-star-fill text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ totalFavorites }}</span>
@@ -47,12 +41,9 @@
 
     <!-- Card 3: Historial -->
     <div
-      class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
-    >
+      class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div
-          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
-        >
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
           <i class="pi pi-history text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ historyCount }}</span>
@@ -63,12 +54,9 @@
 
     <!-- Card 4: Esta Semana -->
     <div
-      class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
-    >
+      class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div
-          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
-        >
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
           <i class="pi pi-chart-line text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ thisWeekCount }}</span>
@@ -84,8 +72,7 @@
     <p-card class="hover:shadow-lg transition-shadow">
       <div class="flex items-center gap-6">
         <div
-          class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center flex-shrink-0"
-        >
+          class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center flex-shrink-0">
           <i class="pi pi-sparkles text-white text-3xl"></i>
         </div>
         <div class="flex-1">
@@ -95,12 +82,7 @@
           <p class="text-gray-600 mb-4">
             Sube una foto de tus ingredientes y obtén recetas instantáneas
           </p>
-          <p-button
-            label="Comenzar"
-            icon="pi pi-arrow-right"
-            (onClick)="goToGenerate()"
-            styleClass="p-button-raised"
-          >
+          <p-button label="Comenzar" icon="pi pi-arrow-right" (onClick)="goToGenerate()" styleClass="p-button-raised">
           </p-button>
         </div>
       </div>
@@ -110,8 +92,7 @@
     <p-card class="hover:shadow-lg transition-shadow">
       <div class="flex items-center gap-6">
         <div
-          class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center flex-shrink-0"
-        >
+          class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center flex-shrink-0">
           <i class="pi pi-history text-white text-3xl"></i>
         </div>
         <div class="flex-1">
@@ -119,15 +100,18 @@
           <p class="text-gray-600 mb-4">
             Revisa todas las recetas que has generado anteriormente
           </p>
-          <p-button
-            label="Ver Historial"
-            icon="pi pi-arrow-right"
-            (onClick)="goToHistory()"
-            styleClass="p-button-raised p-button-secondary"
-          >
+          <p-button label="Ver Historial" icon="pi pi-arrow-right" (onClick)="goToHistory()"
+            styleClass="p-button-raised p-button-secondary">
           </p-button>
         </div>
       </div>
+    </p-card>
+  </div>
+
+  <!-- Después de la sección de Quick Actions -->
+  <div class="mb-8">
+    <p-card header="Estadísticas Mensuales">
+      <canvas id="recipesChart"></canvas>
     </p-card>
   </div>
 
@@ -143,16 +127,12 @@
     </ng-template>
 
     <div class="space-y-4">
-      <div
-        *ngFor="let activity of recentActivities"
-        class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-      >
-        <div
-          [class]="
+      <div *ngFor="let activity of recentActivities"
+        class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+        <div [class]="
             'w-12 h-12 rounded-full flex items-center justify-center ' +
             activity.colorClass
-          "
-        >
+          ">
           <i [class]="activity.icon + ' text-white'"></i>
         </div>
         <div class="flex-1">

@@ -1,3 +1,78 @@
+// src/app/services/history.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+
+export interface Recipe {
+  nombre: string;
+  descripcion: string;
+  ingredientes: string[];
+  instrucciones: string[];
+  tiempoPreparacion: string;
+}
+
+export interface HistoryItem {
+  id: number;
+  generation: {
+    recetas: Recipe[];
+  };
+  createdAt: string;
+  isFavorite: boolean;
+  imageUrl: string;
+}
+
+export interface PageInfo {
+  totalPages: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class HistoryService {
+  private apiUrl = 'http://localhost:3000/history';
+
+  constructor(private http: HttpClient) { }
+
+  getHistory(page: number = 1): Observable<HistoryItem[]> {
+    return this.http.get<HistoryItem[]>(`${this.apiUrl}?page=${page}`);
+  }
+
+  getImage(historyId: number): string {
+    return `${this.apiUrl}/image/${historyId}`;
+  }
+
+  getPageCount(): Observable<PageInfo> {
+    return this.http.get<PageInfo>(`${this.apiUrl}/pages`);
+  }
+
+  toggleFavorite(historyId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${historyId}/favorite`, {});
+  }
+
+  deleteHistory(historyId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${historyId}`);
+  }
+
+  // Para regenerar recetas con la misma imagen
+  regenerateRecipes(historyId: number, suggestIngredients: boolean = false): Observable<any> {
+    return this.http.post(`http://localhost:3000/recetacia/regenerate/${historyId}`, {
+      suggestIngredients
+    });
+  }
+
+  // Obtener solo favoritos
+  getFavorites(): Observable<HistoryItem[]> {
+    // Nota: El backend no tiene endpoint específico para favoritos
+    // Así que filtramos del historial
+    return this.getHistory(1).pipe(
+      map((items: HistoryItem[]) => items.filter(item => item.isFavorite))
+    );
+  }
+}
+
+
+
+/*
 // services/history.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -70,4 +145,4 @@ export class HistoryService {
       responseType: 'blob' 
     });
   }
-}
+}*/

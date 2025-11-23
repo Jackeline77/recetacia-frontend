@@ -1,0 +1,177 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">
+            🧪 Pruebas de API - Backend Connection
+        </h1>
+        <p class="text-gray-600 mb-8">
+            Prueba todos los endpoints del backend para verificar la conexión
+        </p>
+
+        <p-accordion [multiple]="true" [activeIndex]="[0]">
+            <!-- AUTH ENDPOINTS -->
+            <p-accordionTab header="🔐 AUTH - Autenticación">
+                <div class="space-y-4">
+                    <!-- Register -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">POST /auth/register</h3>
+                        <p class="text-sm text-gray-600 mb-3">Registrar nuevo usuario</p>
+                        <button (click)="testRegister()"
+                            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                            Probar Registro
+                        </button>
+                        <div *ngIf="results.register" class="mt-3 p-3 rounded"
+                            [class]="results.register.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.register.data | json }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Login -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">POST /auth/login</h3>
+                        <p class="text-sm text-gray-600 mb-3">Iniciar sesión</p>
+                        <button (click)="testLogin()"
+                            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                            Probar Login
+                        </button>
+                        <div *ngIf="results.login" class="mt-3 p-3 rounded"
+                            [class]="results.login.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.login.data | json }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+
+            <!-- PROFILE ENDPOINTS -->
+            <p-accordionTab header="👤 PROFILE - Perfil de Usuario">
+                <div class="space-y-4">
+                    <!-- Get Profile -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">GET /profile</h3>
+                        <p class="text-sm text-gray-600 mb-3">Obtener perfil del usuario</p>
+                        <button (click)="testGetProfile()"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Obtener Perfil
+                        </button>
+                        <div *ngIf="results.getProfile" class="mt-3 p-3 rounded"
+                            [class]="results.getProfile.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.getProfile.data | json }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Update Profile -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">PATCH /profile</h3>
+                        <p class="text-sm text-gray-600 mb-3">Actualizar perfil</p>
+                        <button (click)="testUpdateProfile()"
+                            class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
+                            Actualizar Perfil
+                        </button>
+                        <div *ngIf="results.updateProfile" class="mt-3 p-3 rounded"
+                            [class]="results.updateProfile.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.updateProfile.data | json }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+
+            <!-- HISTORY ENDPOINTS -->
+            <p-accordionTab header="📜 HISTORY - Historial">
+                <div class="space-y-4">
+                    <!-- Get History -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">GET /history?page=1</h3>
+                        <p class="text-sm text-gray-600 mb-3">Obtener historial paginado</p>
+                        <button (click)="testGetHistory()"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Obtener Historial
+                        </button>
+                        <div *ngIf="results.getHistory" class="mt-3 p-3 rounded"
+                            [class]="results.getHistory.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto max-h-60">{{ results.getHistory.data | json }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Get Pages -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">GET /history/pages</h3>
+                        <p class="text-sm text-gray-600 mb-3">Obtener total de páginas</p>
+                        <button (click)="testGetPages()"
+                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Obtener Páginas
+                        </button>
+                        <div *ngIf="results.getPages" class="mt-3 p-3 rounded"
+                            [class]="results.getPages.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.getPages.data | json }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Favorite -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">PATCH /history/:id/favorite</h3>
+                        <p class="text-sm text-gray-600 mb-3">Marcar/desmarcar favorito</p>
+                        <input type="number" [(ngModel)]="testHistoryId" placeholder="ID del historial"
+                            class="border rounded px-3 py-2 mr-2" />
+                        <button (click)="testToggleFavorite()"
+                            class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                            Toggle Favorito
+                        </button>
+                        <div *ngIf="results.toggleFavorite" class="mt-3 p-3 rounded"
+                            [class]="results.toggleFavorite.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.toggleFavorite.data | json }}</pre>
+                        </div>
+                    </div>
+
+                    <!-- Delete History -->
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h3 class="font-bold mb-2">DELETE /history/:id</h3>
+                        <p class="text-sm text-gray-600 mb-3">Eliminar entrada del historial</p>
+                        <input type="number" [(ngModel)]="deleteHistoryId" placeholder="ID del historial"
+                            class="border rounded px-3 py-2 mr-2" />
+                        <button (click)="testDeleteHistory()"
+                            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                            Eliminar
+                        </button>
+                        <div *ngIf="results.deleteHistory" class="mt-3 p-3 rounded"
+                            [class]="results.deleteHistory.success ? 'bg-green-50' : 'bg-red-50'">
+                            <pre class="text-xs overflow-auto">{{ results.deleteHistory.data | json }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+
+            <!-- SUMMARY -->
+            <p-accordionTab header="📊 Resumen de Pruebas">
+                <div class="bg-white p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Estado de Conexión</h3>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-green-50 rounded-lg text-center">
+                            <div class="text-3xl font-bold text-green-600">{{ successCount }}</div>
+                            <div class="text-sm text-gray-600">Exitosos</div>
+                        </div>
+                        <div class="p-4 bg-red-50 rounded-lg text-center">
+                            <div class="text-3xl font-bold text-red-600">{{ errorCount }}</div>
+                            <div class="text-sm text-gray-600">Errores</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h4 class="font-bold mb-2">Endpoints Probados:</h4>
+                        <ul class="space-y-1 text-sm">
+                            <li *ngFor="let endpoint of testedEndpoints" class="flex items-center gap-2">
+                                <i
+                                    [class]="endpoint.success ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"></i>
+                                <span>{{ endpoint.name }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button (click)="testAll()"
+                        class="mt-6 w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold">
+                        🚀 Probar Todos los Endpoints
+                    </button>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+</div>

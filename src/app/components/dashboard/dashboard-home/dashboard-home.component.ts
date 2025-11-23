@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { ChartModule } from 'primeng/chart';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard-home',
-  imports: [CommonModule, CardModule, ButtonModule, ChartModule],
+  imports: [CommonModule, CardModule, ButtonModule],
   templateUrl: './dashboard-home.component.html',
   styleUrl: './dashboard-home.component.css',
 })
@@ -42,10 +42,12 @@ export class DashboardHomeComponent implements OnInit {
     },
   ];
 
-  constructor(private router: Router) {}
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.loadDashboardStats();
+    // this.createCharts(); // Descomenta cuando quieras gráficos
   }
 
   loadDashboardStats(): void {
@@ -64,5 +66,31 @@ export class DashboardHomeComponent implements OnInit {
 
   goToHistory(): void {
     this.router.navigate(['/dashboard/history']);
+  }
+
+  private createCharts(): void {
+    // Gráfico de recetas por mes
+    const ctx = document.getElementById('recipesChart') as HTMLCanvasElement;
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Recetas Generadas',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: 'rgba(147, 51, 234, 0.8)',
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            }
+          }
+        }
+      });
+    }
   }
 }

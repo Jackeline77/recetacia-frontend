@@ -29,9 +29,6 @@
             "styles": [              
               "src/styles.css"
             ],
-            "externalDependencies": [
-              "chart.js/auto"
-            ],
             "scripts": []
           },
           "configurations": {
