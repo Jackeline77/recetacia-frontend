@@ -30,12 +30,21 @@
             pButton
             pRipple
             severity="success"
-            label="Login"
+            label="Iniciar Sesión"
             icon="pi pi-user"
             (click)="openLogin()"
           ></button>
+          <button
+            pButton
+            pRipple
+            severity="success"
+            label="Registrate"
+            icon="pi pi-user"
+            (click)="openRegister()"
+          ></button>
         </div>
       </ng-template>
+      <!--<button pButton label="Probar Loading" (click)="testLoading()"></button> -->
     </p-menubar>
   </div>
 
@@ -203,7 +212,7 @@
         <!-- Individual -->
         <div
           pAnimateOnScroll
-          enterClass="animate-enter fade-in-10 slide-in-from-l-8 animate-duration-1000"
+          enterClass="animate-enter fade-in-10 slide-in-from-l-8 animate-duration-2000"
           leaveClass="animate-leave fade-out-0"
           class="flex flex-col border border-surface shadow-lg justify-center items-center max-w-80 rounded-2xl p-8 gap-4"
         >
@@ -423,49 +432,47 @@
     </div>
   </main>
 
-<div class="p-6 bg-green-100 mt-10">
-  <div class="flex gap-6">
-    
-    <div class="flex-2 footer-section mt-4">
-      <div class="flex items-center gap-3 mb-4">
-        <img class="w-35 h-20" src="logo_sin_letra.png" alt="Logo" />
-        <p class="text-3xl font-bold text-primary-600">Recetacia</p>
+  <div class="p-6 bg-green-100 mt-10">
+    <div class="flex gap-6">
+      <div class="flex-2 footer-section mt-4">
+        <div class="flex items-center gap-3 mb-4">
+          <img class="w-35 h-20" src="logo_sin_letra.png" alt="Logo" />
+          <p class="text-3xl font-bold text-primary-600">Recetacia</p>
+        </div>
+        <p class="text-justify mb-4">
+          Guarda y accede fácilmente a tus recetas favoritas.
+        </p>
+        <div class="flex gap-3 mt-4">
+          <i class="pi pi-instagram text-xl"></i>
+          <i class="pi pi-twitter text-xl"></i>
+          <i class="pi pi-facebook text-xl"></i>
+        </div>
       </div>
-      <p class="text-justify mb-4">
-        Guarda y accede fácilmente a tus recetas favoritas.
-      </p>
-      <div class="flex gap-3 mt-4">
-        <i class="pi pi-instagram text-xl"></i>
-        <i class="pi pi-twitter text-xl"></i>
-        <i class="pi pi-facebook text-xl"></i>
+
+      <!-- Columna 2: Enlaces -->
+      <div class="flex-1 footer-section">
+        <h4 class="font-semibold mb-2">Enlaces</h4>
+        <ul class="space-y-1">
+          <li>Inicio</li>
+          <li>Categorías</li>
+          <li>Buscar</li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Cuenta -->
+      <div class="flex-1 footer-section">
+        <h4 class="font-semibold mb-2">Cuenta</h4>
+        <ul class="space-y-1">
+          <li>Mi perfil</li>
+          <li>Añadir receta</li>
+          <li>Contacto</li>
+        </ul>
       </div>
     </div>
 
-    <!-- Columna 2: Enlaces -->
-    <div class="flex-1 footer-section">
-      <h4 class="font-semibold mb-2">Enlaces</h4>
-      <ul class="space-y-1">
-        <li>Inicio</li>
-        <li>Categorías</li>
-        <li>Buscar</li>
-      </ul>
-    </div>
-
-    <!-- Columna 3: Cuenta -->
-    <div class="flex-1 footer-section">
-      <h4 class="font-semibold mb-2">Cuenta</h4>
-      <ul class="space-y-1">
-        <li>Mi perfil</li>
-        <li>Añadir receta</li>
-        <li>Contacto</li>
-      </ul>
+    <div class="mt-6 text-center font-bold bg-green-100">
+      © 2025 MisRecetApp. Todos los derechos reservados.<br />
+      Términos y condiciones | Política de privacidad
     </div>
   </div>
-
-  <div class="mt-6 text-center font-bold bg-green-100">
-    © 2025 MisRecetApp. Todos los derechos reservados.<br />
-    Términos y condiciones | Política de privacidad
-  </div>
-</div>
-
 </body>

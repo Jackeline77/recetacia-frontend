@@ -16,6 +16,7 @@ import { DialogModule } from 'primeng/dialog';
 import { Router } from '@angular/router';
 import { PanelModule } from 'primeng/panel';
 import { DividerModule } from 'primeng/divider';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-landing',
@@ -78,10 +79,15 @@ export class LandingComponent implements OnInit {
       },
     ];
   }
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   openLogin() {
     console.log('Navegando a /login');
     this.router.navigate(['/login']);
+  }
+
+  openRegister() {
+    console.log('Navegando a /register');
+    this.router.navigate(['/register']);
   }
 }

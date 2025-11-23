@@ -1,0 +1,50 @@
+<div class="p-8 space-y-8">
+  <h2 class="text-2xl font-bold text-gray-800">
+    🧪 Pruebas de Loading Automático
+  </h2>
+
+  <!-- Prueba de Navegación -->
+  <div class="border-2 border-blue-300 rounded-lg p-6 bg-blue-50">
+    <h3 class="font-semibold text-lg mb-4 text-blue-800">
+      🚀 PRUEBA DE NAVEGACIÓN LENTA
+    </h3>
+
+    <div class="space-y-4">
+      <p class="text-blue-700">
+        <strong>Instrucciones:</strong> Haz clic en cualquier enlace y observa
+        si aparece el loading
+      </p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Usa componentes que ya tienes -->
+        <a
+          [routerLink]="['/login']"
+          class="bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition font-semibold text-center"
+        >
+          🔐 Ir a Login
+        </a>
+
+        <a
+          [routerLink]="['/register']"
+          class="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition font-semibold text-center"
+        >
+          📝 Ir a Register
+        </a>
+
+        <a
+          [routerLink]="['/landing']"
+          class="bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition font-semibold text-center"
+        >
+          🏠 Ir a Landing
+        </a>
+      </div>
+
+      <button
+        (click)="testDirecto()"
+        class="bg-purple-500 text-white px-4 py-2 rounded"
+      >
+        🔧 Test Directo del Loading
+      </button>
+    </div>
+  </div>
+</div>

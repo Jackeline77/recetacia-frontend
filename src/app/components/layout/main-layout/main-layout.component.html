@@ -1,0 +1,128 @@
+<div class="flex h-screen overflow-hidden bg-green-600">
+  <aside class="w-80 bg-white shadow-lg flex-shrink-0 hidden lg:flex flex-col border-r border-gray-200 ">
+
+    <!-- Logo / Header -->
+    <div class="p-6 border-b border-gray-100">
+      <div class="flex items-center gap-2">
+        <div>
+          <img class="w-30 h-20" src="logo_sin_letra.png" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-primary-600">Recetacia</p>
+          <p class="text-sm text-green-500">Tu recetario digital</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu con PrimeNG -->
+    <div class="flex-1 overflow-y-auto p-4">
+      <p-menu [model]="menuItems" styleClass="w-full border-none bg-transparent" [popup]="false">
+
+        <ng-template #item let-item>
+          <a pRipple
+            class="flex items-center p-menu-item-link hover:bg-purple-50 transition-colors duration-200 rounded-lg mx-2"
+            [routerLink]="item.route" [class.bg-purple-50]="isActiveRoute(item.route)"
+            [class.text-purple-700]="isActiveRoute(item.route)">
+            <span [class]="item.icon + ' text-lg'"></span>
+            <span class="ml-3 font-medium text-gray-700">{{ item.label }}</span>
+            <p-badge *ngIf="item.badge" class="ml-auto" [value]="item.badge" styleClass="bg-red-500 text-white" />
+          </a>
+        </ng-template>
+      </p-menu>
+    </div>
+
+    <!-- User Profile & Logout -->
+    <div class="p-4 border-t border-gray-100">
+      <p-menu [model]="userMenuItems" styleClass="w-full border-none bg-transparent" [popup]="false">
+
+        <ng-template #item let-item>
+          <a pRipple
+            class="flex items-center p-menu-item-link hover:bg-gray-50 transition-colors duration-200 rounded-lg mx-2"
+            [routerLink]="item.route">
+            <span [class]="item.icon + ' text-lg'"></span>
+            <span class="ml-3 font-medium text-gray-700">{{ item.label }}</span>
+          </a>
+        </ng-template>
+
+        <ng-template #end>
+          <button pRipple (click)="logout()"
+            class="relative overflow-hidden w-full border-0 bg-transparent flex items-center p-3 hover:bg-red-50 rounded-lg cursor-pointer transition-colors duration-200 mx-2 mt-2">
+            <i class="pi pi-sign-out text-red-500"></i>
+            <span class="ml-3 font-medium text-red-600">Cerrar Sesión</span>
+          </button>
+        </ng-template>
+      </p-menu>
+    </div>
+  </aside>
+
+  <!-- Mobile Sidebar (Simplificado) -->
+  <p-sidebar [(visible)]="sidebarVisible" [baseZIndex]="10000" styleClass="bg-white shadow-xl w-80 p-0">
+
+    <div class="h-full flex flex-col">
+      <!-- Logo Mobile -->
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-lg flex items-center justify-center">
+            <i class="pi pi-book text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-800">Recetacia</h1>
+            <p class="text-xs text-gray-500">Tu recetario digital</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="flex-1 overflow-y-auto p-4">
+        <ul class="space-y-2">
+          <li *ngFor="let item of menuItems">
+            <a [routerLink]="item.route" (click)="sidebarVisible = false"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-purple-50 transition-all duration-200 cursor-pointer"
+              [class.bg-purple-50]="isActiveRoute(item.route)" [class.text-purple-700]="isActiveRoute(item.route)">
+              <i [class]="item.icon + ' text-lg'"></i>
+              <span class="font-medium">{{ item.label }}</span>
+              <span *ngIf="item.badge" class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                {{ item.badge }}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- User Info & Logout Mobile -->
+      <div class="p-4 border-t border-gray-100">
+        <button (click)="logout()"
+          class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium">
+          <i class="pi pi-sign-out"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+  </p-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Header (Mobile) -->
+    <header class="bg-white shadow-sm lg:hidden">
+      <div class="flex items-center justify-between p-4">
+        <button (click)="sidebarVisible = true" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i class="pi pi-bars text-xl text-gray-600"></i>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <span class="text-lg font-bold text-purple-700">Recetacia</span>
+          <div
+            class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center">
+            <i class="pi pi-user text-white text-sm"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -55,7 +55,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('✅ Login exitoso', response);
           // Redirigir al dashboard o landing
-          this.router.navigate(['/landing']); // Cambia a '/dashboard' cuando lo crees
+          this.router.navigate(['/dashboard/history']);
         },
         error: (error) => {
           console.error('❌ Error en login:', error);
@@ -103,4 +103,8 @@ export class LoginComponent {
   get password() {
     return this.loginForm.get('password');
   }
+  goToRegister(): void {
+    this.router.navigate(['/register']);
+  }
+  
 }
