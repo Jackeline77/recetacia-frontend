@@ -1,144 +1,129 @@
 <div class="p-6">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-4xl font-bold text-gray-800 mb-2">
-        <i class="pi pi-history mr-3"></i>
-        Historial de Recetas
-      </h1>
-      <p class="text-gray-600">Revisa todas las recetas que has generado</p>
-    </div>
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Mi Historial</h1>
+    <p class="text-gray-600">Todas las recetas que has generado</p>
+  </div>
 
-    <!-- Loading State -->
-    <div
-      *ngIf="isLoading"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      <div *ngFor="let item of [1, 2, 3, 4, 5, 6]" class="animate-pulse">
-        <div class="bg-white rounded-xl h-96 shadow-lg"></div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <i class="pi pi-spin pi-spinner text-4xl text-purple-600 mb-4"></i>
+    <p class="text-gray-600">Cargando historial...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && historyItems.length === 0" class="text-center py-12">
+    <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay historial aún</h3>
+    <p class="text-gray-500 mb-6">Tus recetas generadas aparecerán aquí</p>
+  </div>
+
+  <!-- History Items -->
+  <div *ngIf="!isLoading && historyItems.length > 0" class="space-y-6">
+    <div *ngFor="let item of historyItems" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+
+      <!-- Card Header -->
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <!-- Imagen -->
+            <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+              <app-auth-image [src]="item.imageUrl" [alt]="'Imagen de ingredientes'" class="w-full h-full object-cover">
+              </app-auth-image>
+            </div>
+
+            <!-- Información básica -->
+            <div>
+              <p class="text-sm text-gray-500">
+                Generado el {{ item.createdAt | date:'medium' }}
+              </p>
+              <div class="flex items-center gap-2 mt-1">
+                <i class="pi pi-book text-gray-400"></i>
+                <span class="text-sm text-gray-600">
+                  {{ getRecipes(item).length }} recetas generadas
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex gap-2">
+            <p-button [icon]="item.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'" (onClick)="toggleFavorite(item)"
+              [pTooltip]="item.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+              [styleClass]="item.isFavorite ? 'p-button-warning' : 'p-button-outlined'">
+            </p-button>
+
+            <p-button icon="pi pi-trash" (onClick)="confirmDelete(item.id)" [pTooltip]="'Eliminar'" severity="danger"
+              styleClass="p-button-outlined">
+            </p-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recetas -->
+      <div class="p-6">
+        <div class="grid md:grid-cols-3 gap-4">
+          <div *ngFor="let recipe of getRecipes(item); let i = index"
+            class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+
+            <!-- Header de receta -->
+            <div class="mb-3">
+              <h3 class="font-semibold text-gray-800 text-lg mb-1">
+                {{ getRecipeName(recipe) }}
+              </h3>
+              <p class="text-sm text-gray-600 line-clamp-2">
+                {{ getRecipeDescription(recipe) }}
+              </p>
+            </div>
+
+            <!-- Ingredientes -->
+            <div class="mb-4">
+              <p class="text-sm font-medium text-gray-700 mb-2">Ingredientes:</p>
+              <div class="flex flex-wrap gap-1">
+                <span *ngFor="let ingredient of getRecipeIngredients(recipe) | slice:0:3"
+                  class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                  {{ ingredient }}
+                </span>
+                <span *ngIf="getRecipeIngredients(recipe).length > 3"
+                  class="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                  +{{ getRecipeIngredients(recipe).length - 3 }} más
+                </span>
+              </div>
+            </div>
+
+            <!-- Tiempo y acción -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">
+                ⏱️ {{ getRecipeTime(recipe) }}
+              </span>
+              <p-button label="Ver Receta" icon="pi pi-eye" (onClick)="viewDetails(item.id)"
+                styleClass="p-button-sm p-button-primary">
+              </p-button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div
-      *ngIf="!isLoading && historyItems.length === 0"
-      class="text-center py-20"
-    >
-      <i class="pi pi-inbox text-8xl text-gray-300 mb-4"></i>
-      <h3 class="text-2xl font-semibold text-gray-600 mb-2">
-        No hay historial todavía
-      </h3>
-      <p class="text-gray-500 mb-6">
-        Comienza generando recetas desde imágenes de ingredientes
-      </p>
-    </div>
+    <!-- Paginación -->
+    <div *ngIf="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+      <p-button icon="pi pi-chevron-left" (onClick)="previousPage()" [disabled]="currentPage === 1"
+        styleClass="p-button-outlined">
+      </p-button>
 
-    <!-- History Grid -->
-    <div
-      *ngIf="!isLoading && historyItems.length > 0"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
-    >
-      <p-card
-        *ngFor="let item of historyItems"
-        class="history-card hover:shadow-2xl transition-all duration-300"
-      >
-        <!-- Image -->
-        <div class="relative mb-4 rounded-lg overflow-hidden group">
-          <img
-            [src]="item.imageUrl"
-            [alt]="'Ingredientes generados el ' + (item.createdAt | date)"
-            class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-          />
+      <span class="text-gray-600">
+        Página {{ currentPage }} de {{ totalPages }}
+      </span>
 
-          <!-- Favorite Badge -->
-          <button
-            *ngIf="item.isFavorite"
-            class="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full shadow-lg"
-          >
-            <i class="pi pi-star-fill"></i>
-          </button>
-        </div>
-
-        <!-- Date -->
-        <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
-          <i class="pi pi-calendar"></i>
-          <span>{{ item.createdAt | date : "medium" }}</span>
-        </div>
-
-        <!-- Recipes Count -->
-        <div class="mb-4">
-          <p-tag
-            [value]="item.generation.recetas.length + ' Recetas Generadas'"
-            severity="success"
-          >
-          </p-tag>
-        </div>
-
-        <!-- Recipe Names -->
-        <div class="mb-4">
-          <h4 class="font-semibold text-gray-700 mb-2">Recetas:</h4>
-          <ul class="space-y-1">
-            <li
-              *ngFor="let receta of item.generation.recetas.slice(0, 3)"
-              class="text-sm text-gray-600 flex items-start"
-            >
-              <i class="pi pi-check text-green-500 mr-2 mt-1"></i>
-              <span>{{ receta.nombre }}</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex gap-2 flex-wrap">
-          <p-button
-            label="Ver Detalles"
-            icon="pi pi-eye"
-            (onClick)="viewDetails(item.id)"
-            styleClass="p-button-sm p-button-primary flex-1"
-          >
-          </p-button>
-
-          <p-button
-            [icon]="item.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"
-            (onClick)="toggleFavorite(item)"
-            [pTooltip]="
-              item.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'
-            "
-            [styleClass]="
-              item.isFavorite
-                ? 'p-button-sm p-button-warning'
-                : 'p-button-sm p-button-outlined'
-            "
-          >
-          </p-button>
-
-          <p-button
-            icon="pi pi-trash"
-            (onClick)="confirmDelete(item.id)"
-            [pTooltip]="'Eliminar'"
-            severity="danger"
-            styleClass="p-button-sm p-button-outlined"
-          >
-          </p-button>
-        </div>
-      </p-card>
-    </div>
-
-    <!-- Pagination -->
-    <div *ngIf="totalPages > 1" class="flex justify-center">
-      <p-paginator
-        [rows]="10"
-        [totalRecords]="totalPages * 10"
-        [first]="(currentPage - 1) * 10"
-        (onPageChange)="onPageChange($event)"
-      >
-      </p-paginator>
+      <p-button icon="pi pi-chevron-right" (onClick)="nextPage()" [disabled]="currentPage === totalPages"
+        styleClass="p-button-outlined">
+      </p-button>
     </div>
   </div>
 </div>
 
-<!-- Confirm Dialog -->
+<!-- Diálogo de confirmación -->
 <p-confirmDialog></p-confirmDialog>
 
-<!-- Toast Messages -->
+<!-- Toast para mensajes -->
 <p-toast></p-toast>

@@ -32,12 +32,31 @@ export class HistoryService {
 
   constructor(private http: HttpClient) { }
 
-  getHistory(page: number = 1): Observable<HistoryItem[]> {
-    return this.http.get<HistoryItem[]>(`${this.apiUrl}?page=${page}`).pipe(
-      map(items => items.map(item => ({
-        ...item,
-        imageUrl: `${this.apiUrl}/image/${item.id}`
-      })))
+  getHistory(page: number = 1): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?page=${page}`).pipe(
+      map((response: any) => {
+        // ✅ El backend devuelve un array directo, no un objeto con "items"
+        console.log('📦 Respuesta del backend:', response);
+
+        // Si es un array, usarlo directamente
+        if (Array.isArray(response)) {
+          return response.map(item => ({
+            ...item,
+            imageUrl: `${this.apiUrl}/image/${item.id}`
+          }));
+        }
+
+        // Si es un objeto con propiedad "items", usar esa propiedad
+        if (response && response.items) {
+          return response.items.map((item: any) => ({
+            ...item,
+            imageUrl: `${this.apiUrl}/image/${item.id}`
+          }));
+        }
+
+        // Si no hay datos, devolver array vacío
+        return [];
+      })
     );
   }
 
@@ -56,18 +75,16 @@ export class HistoryService {
   deleteHistory(historyId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${historyId}`);
   }
-  // Para regenerar recetas con la misma imagen
+  /*Para regenerar recetas con la misma imagen
   regenerateRecipes(historyId: number, suggestIngredients: boolean = false): Observable<any> {
     return this.http.post(`http://localhost:3000/recetacia/regenerate/${historyId}`, {
       suggestIngredients
     });
-  }
+  }*/
   // Obtener solo favoritos
-  getFavorites(): Observable<HistoryItem[]> {
-    // Nota: El backend no tiene endpoint específico para favoritos
-    // Así que filtramos del historial
+  getFavorites(): Observable<any[]> {
     return this.getHistory(1).pipe(
-      map((items: HistoryItem[]) => items.filter((item) => item.isFavorite))
+      map((items: any[]) => items.filter((item) => item.isFavorite))
     );
   }
 }

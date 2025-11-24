@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HistoryService, HistoryItem } from '../../../services/history.service';
@@ -25,75 +25,111 @@ import { AuthImageComponent } from '../../shared/auth-image/auth-image.component
     ToastModule,
     TooltipModule,
     ButtonModule,
+    AuthImageComponent,
   ],
   templateUrl: './history-list.component.html',
   styleUrl: './history-list.component.css',
 })
 export class HistoryListComponent implements OnInit {
-  historyItems: HistoryItem[] = [];
+  private historyService = inject(HistoryService);
+  private loadingService = inject(LoadingService);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
+
+  historyItems: any[] = [];
+  isLoading = true;
   currentPage = 1;
   totalPages = 1;
-  isLoading = false;
-
-  constructor(
-    private historyService: HistoryService,
-    private loadingService: LoadingService,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private router: Router
-  ) {}
 
   ngOnInit(): void {
     this.loadHistory();
-    this.loadPageCount();
   }
 
   loadHistory(): void {
     this.isLoading = true;
     this.historyService.getHistory(this.currentPage).subscribe({
-      next: (data) => {
-        this.historyItems = data;
-        this.isLoading = false;
+      next: (historyItems: any[]) => {
+        // ✅ Ahora recibimos el array directamente
+        this.historyItems = historyItems || [];
+
+        // Obtener total de páginas por separado
+        this.historyService.getPageCount().subscribe({
+          next: (pageInfo) => {
+            this.totalPages = pageInfo.totalPages || 1;
+            this.isLoading = false;
+            console.log('✅ Historial cargado:', this.historyItems);
+            console.log('📄 Total de páginas:', this.totalPages);
+          },
+          error: (error) => {
+            console.error('❌ Error cargando páginas:', error);
+            this.totalPages = 1;
+            this.isLoading = false;
+          }
+        });
       },
       error: (error) => {
-        console.error('Error loading history:', error);
+        console.error('❌ Error cargando historial:', error);
+        this.isLoading = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudo cargar el historial',
         });
-        this.isLoading = false;
       },
     });
   }
 
-  loadPageCount(): void {
-    this.historyService.getPageCount().subscribe({
-      next: (data) => {
-        this.totalPages = data.totalPages;
-      },
-    });
+  // Método seguro para obtener recetas - maneja español e inglés
+  getRecipes(item: any): any[] {
+    return item?.generation?.recetas || item?.generation?.recipes || [];
   }
 
-  viewDetails(historyId: number): void {
-    this.router.navigate(['/dashboard/history', historyId]);
+  // Método seguro para obtener nombre de receta - maneja español e inglés
+  getRecipeName(recipe: any): string {
+    return recipe?.nombre || recipe?.title || 'Receta sin nombre';
   }
 
-  toggleFavorite(item: HistoryItem): void {
+  // Método seguro para obtener descripción - maneja español e inglés
+  getRecipeDescription(recipe: any): string {
+    return (
+      recipe?.descripcion || recipe?.description || 'Sin descripción disponible'
+    );
+  }
+
+  // Método seguro para obtener ingredientes - maneja español e inglés
+  getRecipeIngredients(recipe: any): string[] {
+    return recipe?.ingredientes || recipe?.ingredients || [];
+  }
+
+  // Método seguro para obtener tiempo de preparación - maneja español e inglés
+  getRecipeTime(recipe: any): string {
+    return (
+      recipe?.tiempoPreparacion ||
+      (recipe?.prep_time_minutes
+        ? `${recipe.prep_time_minutes} minutos`
+        : 'Tiempo no especificado')
+    );
+  }
+
+  viewDetails(itemId: number): void {
+    this.router.navigate(['/dashboard/history', itemId]);
+  }
+
+  toggleFavorite(item: any): void {
     this.historyService.toggleFavorite(item.id).subscribe({
-      next: () => {
-        item.isFavorite = !item.isFavorite;
+      next: (updatedItem) => {
+        item.isFavorite = updatedItem.isFavorite;
         this.messageService.add({
           severity: 'success',
-          summary: item.isFavorite
+          summary: 'Éxito',
+          detail: item.isFavorite
             ? 'Añadido a favoritos'
             : 'Quitado de favoritos',
-          detail: item.isFavorite
-            ? 'La receta fue marcada como favorita'
-            : 'La receta fue desmarcada',
         });
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error al actualizar favorito:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -103,45 +139,54 @@ export class HistoryListComponent implements OnInit {
     });
   }
 
-  confirmDelete(historyId: number): void {
+  confirmDelete(itemId: number): void {
     this.confirmationService.confirm({
-      message: '¿Estás seguro de que deseas eliminar este historial?',
+      message:
+        '¿Estás seguro de que quieres eliminar esta entrada del historial?',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.deleteHistory(historyId);
+        this.deleteItem(itemId);
       },
     });
   }
 
-  deleteHistory(historyId: number): void {
-    this.loadingService.show('Eliminando...');
-    this.historyService.deleteHistory(historyId).subscribe({
+  private deleteItem(itemId: number): void {
+    this.historyService.deleteHistory(itemId).subscribe({
       next: () => {
-        this.loadingService.hide();
+        this.historyItems = this.historyItems.filter(
+          (item) => item.id !== itemId
+        );
         this.messageService.add({
           severity: 'success',
-          summary: 'Eliminado',
-          detail: 'Historial eliminado correctamente',
+          summary: 'Éxito',
+          detail: 'Entrada eliminada correctamente',
         });
-        this.loadHistory();
       },
-      error: () => {
-        this.loadingService.hide();
+      error: (error) => {
+        console.error('Error eliminando item:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo eliminar el historial',
+          detail: 'No se pudo eliminar la entrada',
         });
       },
     });
   }
 
-  onPageChange(event: any): void {
-    this.currentPage = event.page + 1;
-    this.loadHistory();
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadHistory();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadHistory();
+    }
   }
 }

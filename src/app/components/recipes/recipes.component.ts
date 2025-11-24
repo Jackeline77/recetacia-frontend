@@ -48,13 +48,10 @@ export class RecipesComponent implements OnInit {
     { label: 'Más Recientes', value: 'newest' },
     { label: 'Más Antiguas', value: 'oldest' },
     { label: 'Nombre A-Z', value: 'name-asc' },
-    { label: 'Nombre Z-A', value: 'name-desc' }
+    { label: 'Nombre Z-A', value: 'name-desc' },
   ];
 
-  constructor(
-    private historyService: HistoryService,
-    private router: Router
-  ) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadAllRecipes();
@@ -67,15 +64,29 @@ export class RecipesComponent implements OnInit {
       next: (historyItems) => {
         // Extraer todas las recetas de todos los items del historial
         this.allRecipes = [];
-        
-        historyItems.forEach(item => {
-          item.generation.recetas.forEach(receta => {
+
+        historyItems.forEach((item: any) => {
+          // ✅ Manejar tanto español (recetas) como inglés (recipes)
+          const recipes =
+            item.generation?.recetas || item.generation?.recipes || [];
+
+          recipes.forEach((receta: any) => {
             this.allRecipes.push({
-              ...receta,
+              // ✅ Manejar tanto español como inglés
+              nombre: receta.nombre || receta.title || 'Receta sin nombre',
+              descripcion:
+                receta.descripcion || receta.description || 'Sin descripción',
+              ingredientes: receta.ingredientes || receta.ingredients || [],
+              instrucciones: receta.instrucciones || receta.instructions || [],
+              tiempoPreparacion:
+                receta.tiempoPreparacion ||
+                (receta.prep_time_minutes
+                  ? `${receta.prep_time_minutes} minutos`
+                  : 'Tiempo no especificado'),
               historyId: item.id,
               createdAt: item.createdAt,
               imageUrl: item.imageUrl,
-              isFavorite: item.isFavorite
+              isFavorite: item.isFavorite,
             });
           });
         });
@@ -87,7 +98,7 @@ export class RecipesComponent implements OnInit {
       error: (error) => {
         console.error('❌ Error cargando recetas:', error);
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -97,20 +108,27 @@ export class RecipesComponent implements OnInit {
     // Aplicar búsqueda
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter(recipe => 
-        recipe.nombre.toLowerCase().includes(term) ||
-        recipe.descripcion.toLowerCase().includes(term) ||
-        recipe.ingredientes.some(ing => ing.toLowerCase().includes(term))
+      result = result.filter(
+        (recipe) =>
+          recipe.nombre.toLowerCase().includes(term) ||
+          recipe.descripcion.toLowerCase().includes(term) ||
+          recipe.ingredientes.some((ing) => ing.toLowerCase().includes(term))
       );
     }
 
     // Aplicar ordenamiento
     switch (this.sortBy) {
       case 'newest':
-        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        result.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
         break;
       case 'oldest':
-        result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        result.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
         break;
       case 'name-asc':
         result.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -132,19 +150,32 @@ export class RecipesComponent implements OnInit {
     this.router.navigate(['/dashboard/history', historyId]);
   }
 
+  get totalRecipesCount(): number {
+    return this.allRecipes.length;
+  }
+
   get favoriteRecipesCount(): number {
-    return this.allRecipes.filter(r => r.isFavorite).length;
+    return this.allRecipes.filter((r) => r.isFavorite).length;
   }
 
   get historyCount(): number {
-    return new Set(this.allRecipes.map(r => r.historyId)).size;
+    return new Set(this.allRecipes.map((r) => r.historyId)).size;
   }
 
   get uniqueIngredientsCount(): number {
     const allIngredients = new Set<string>();
-    this.allRecipes.forEach(recipe => {
-      recipe.ingredientes.forEach(ing => allIngredients.add(ing.toLowerCase()));
+    this.allRecipes.forEach((recipe) => {
+      recipe.ingredientes.forEach((ing) =>
+        allIngredients.add(ing.toLowerCase())
+      );
     });
     return allIngredients.size;
+  }
+
+  // Método para obtener preview de ingredientes
+  getIngredientsPreview(ingredients: string[]): string {
+    return (
+      ingredients.slice(0, 3).join(', ') + (ingredients.length > 3 ? '...' : '')
+    );
   }
 }
