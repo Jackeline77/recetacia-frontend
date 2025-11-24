@@ -55,7 +55,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('✅ Login exitoso', response);
           // Redirigir al dashboard o landing
-          this.router.navigate(['/dashboard/history']);
+          this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           console.error('❌ Error en login:', error);

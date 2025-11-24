@@ -38,13 +38,17 @@
 
       <p-card *ngFor="let item of favoriteItems" class="favorite-card hover:shadow-2xl transition-all duration-300">
 
-        <!-- Image with Star Badge -->
+        <!-- Imagen real con AuthImageComponent -->
         <div class="relative mb-4 rounded-lg overflow-hidden group">
-          <img [src]="item.imageUrl" [alt]="'Favorito generado el ' + (item.createdAt | date)"
-            class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+          <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
+            <app-auth-image [src]="item.imageUrl"
+              [alt]="'Imagen de ingredientes generada el ' + (item.createdAt | date)"
+              class="w-full h-full object-cover">
+            </app-auth-image>
+          </div>
 
           <!-- Star Badge -->
-          <div class="absolute top-2 right-2 bg-yellow-400 text-white p-3 rounded-full shadow-lg animate-pulse">
+          <div class="absolute top-2 right-2 bg-yellow-400 text-white p-3 rounded-full shadow-lg">
             <i class="pi pi-star-fill text-xl"></i>
           </div>
         </div>
@@ -57,7 +61,7 @@
 
         <!-- Recipes Count -->
         <div class="mb-4">
-          <p-tag [value]="item.generation.recetas.length + ' Recetas'" severity="success" icon="pi pi-book">
+          <p-tag [value]="getRecipes(item).length + ' Recetas'" severity="success" icon="pi pi-book">
           </p-tag>
         </div>
 
@@ -65,9 +69,9 @@
         <div class="mb-4">
           <h4 class="font-semibold text-gray-700 mb-2">Recetas:</h4>
           <ul class="space-y-1">
-            <li *ngFor="let receta of item.generation.recetas" class="text-sm text-gray-600 flex items-start">
+            <li *ngFor="let receta of getRecipes(item)" class="text-sm text-gray-600 flex items-start">
               <i class="pi pi-check text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-              <span class="line-clamp-1">{{ receta.nombre }}</span>
+              <span class="line-clamp-1">{{ getRecipeName(receta) }}</span>
             </li>
           </ul>
         </div>
@@ -85,19 +89,12 @@
       </p-card>
     </div>
 
-    <!-- Stats -->
-    <div *ngIf="favoriteItems.length > 0"
-      class="mt-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-xl p-6 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-2xl font-bold mb-1">
-            {{ favoriteItems.length }} Recetas Favoritas
-          </h3>
-          <p class="text-yellow-100">
-            {{ totalRecipes }} recetas en total guardadas
-          </p>
-        </div>
-        <i class="pi pi-heart-fill text-6xl opacity-20"></i>
+    <!-- Stats discreto -->
+    <div *ngIf="favoriteItems.length > 0" class="mt-8 bg-gray-100 rounded-xl p-4 text-gray-700">
+      <div class="text-center">
+        <p class="font-semibold">
+          Tienes {{ favoriteItems.length }} recetas favoritas de {{ totalRecipes }} en total
+        </p>
       </div>
     </div>
   </div>

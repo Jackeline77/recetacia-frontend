@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HistoryService, HistoryItem } from '../../services/history.service';
+import { HistoryService } from '../../services/history.service';
 import { LoadingService } from '../../services/loading.service';
 import { CardModule } from 'primeng/card';
-import { ButtonModule, Button } from 'primeng/button';
-import { TagModule, Tag } from 'primeng/tag';
-import { ToastModule, Toast } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
@@ -14,12 +14,20 @@ import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [CommonModule, CardModule, Button, Tag, Toast, ButtonModule, TooltipModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    TagModule,
+    ToastModule,
+    TooltipModule,
+    AuthImageComponent,
+  ],
   templateUrl: './favorites.component.html',
   styleUrl: './favorites.component.css'
 })
 export class FavoritesComponent implements OnInit {
-  favoriteItems: HistoryItem[] = [];
+  favoriteItems: any[] = [];
   isLoading = false;
 
   constructor(
@@ -55,11 +63,21 @@ export class FavoritesComponent implements OnInit {
     });
   }
 
+  // Método seguro para obtener recetas (maneja español e inglés)
+  getRecipes(item: any): any[] {
+    return item?.generation?.recetas || item?.generation?.recipes || [];
+  }
+
+  // Método seguro para obtener nombre de receta
+  getRecipeName(recipe: any): string {
+    return recipe?.nombre || recipe?.title || 'Receta sin nombre';
+  }
+
   viewDetails(historyId: number): void {
     this.router.navigate(['/dashboard/history', historyId]);
   }
 
-  removeFavorite(item: HistoryItem): void {
+  removeFavorite(item: any): void {
     this.loadingService.show('Quitando de favoritos...');
 
     this.historyService.toggleFavorite(item.id).subscribe({
@@ -93,7 +111,7 @@ export class FavoritesComponent implements OnInit {
 
   get totalRecipes(): number {
     return this.favoriteItems.reduce((total, item) => {
-      return total + item.generation.recetas.length;
+      return total + this.getRecipes(item).length;
     }, 0);
   }
 }
