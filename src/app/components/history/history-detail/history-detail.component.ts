@@ -1,24 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HistoryService, HistoryItem, Recipe } from '../../../services/history.service';
+import {
+  HistoryService,
+  HistoryItem,
+  Recipe,
+} from '../../../services/history.service';
 import { LoadingService } from '../../../services/loading.service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { DividerModule } from 'primeng/divider';
 import { ChipModule } from 'primeng/chip';
+import { AuthImageComponent } from '../../shared/auth-image/auth-image.component';
 
 @Component({
   selector: 'app-history-detail',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     CardModule,
     ButtonModule,
     TabViewModule,
     DividerModule,
-    ChipModule],
+    ChipModule,
+  ],
   templateUrl: './history-detail.component.html',
-  styleUrl: './history-detail.component.css'
+  styleUrl: './history-detail.component.css',
 })
 export class HistoryDetailComponent implements OnInit {
   historyItem: HistoryItem | null = null;
@@ -29,7 +36,7 @@ export class HistoryDetailComponent implements OnInit {
     private router: Router,
     private historyService: HistoryService,
     private loadingService: LoadingService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -64,19 +71,6 @@ export class HistoryDetailComponent implements OnInit {
         if (this.historyItem) {
           this.historyItem.isFavorite = !this.historyItem.isFavorite;
         }
-      }
-    });
-  }
-
-  regenerate(): void {
-    this.loadingService.show('Regenerando recetas...');
-    this.historyService.regenerateRecipes(this.historyId).subscribe({
-      next: () => {
-        this.loadingService.hide();
-        this.loadHistoryItem();
-      },
-      error: () => {
-        this.loadingService.hide();
       }
     });
   }

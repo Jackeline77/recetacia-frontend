@@ -1,0 +1,8 @@
+<img *ngIf="imageUrl" [src]="imageUrl" [alt]="alt" [class]="imageClass" [style.object-fit]="'cover'" />
+<div *ngIf="!imageUrl && loading" [class]="imageClass"
+    class="bg-gray-200 animate-pulse flex items-center justify-center">
+    <i class="pi pi-spin pi-spinner text-gray-400"></i>
+</div>
+<div *ngIf="!imageUrl && !loading" [class]="imageClass" class="bg-gray-100 flex items-center justify-center">
+    <i class="pi pi-image text-gray-300 text-3xl"></i>
+</div>

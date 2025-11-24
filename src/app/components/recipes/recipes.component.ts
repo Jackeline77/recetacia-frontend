@@ -2,13 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HistoryService, HistoryItem, Recipe } from '../../services/history.service';
+import {
+  HistoryService,
+  HistoryItem,
+  Recipe,
+} from '../../services/history.service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { ChipModule } from 'primeng/chip';
 import { DataViewModule } from 'primeng/dataview';
+import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
 
 interface RecipeWithHistory extends Recipe {
   historyId: number;
@@ -19,15 +24,18 @@ interface RecipeWithHistory extends Recipe {
 
 @Component({
   selector: 'app-recipes',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
     DropdownModule,
-    ChipModule,],
+    ChipModule,
+    DataViewModule,
+  ],
   templateUrl: './recipes.component.html',
-  styleUrl: './recipes.component.css'
+  styleUrl: './recipes.component.css',
 })
 export class RecipesComponent implements OnInit {
   allRecipes: RecipeWithHistory[] = [];
@@ -46,7 +54,7 @@ export class RecipesComponent implements OnInit {
   constructor(
     private historyService: HistoryService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadAllRecipes();
@@ -59,7 +67,7 @@ export class RecipesComponent implements OnInit {
       next: (historyItems) => {
         // Extraer todas las recetas de todos los items del historial
         this.allRecipes = [];
-
+        
         historyItems.forEach(item => {
           item.generation.recetas.forEach(receta => {
             this.allRecipes.push({
@@ -89,7 +97,7 @@ export class RecipesComponent implements OnInit {
     // Aplicar búsqueda
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter(recipe =>
+      result = result.filter(recipe => 
         recipe.nombre.toLowerCase().includes(term) ||
         recipe.descripcion.toLowerCase().includes(term) ||
         recipe.ingredientes.some(ing => ing.toLowerCase().includes(term))
@@ -122,10 +130,6 @@ export class RecipesComponent implements OnInit {
 
   viewRecipe(historyId: number): void {
     this.router.navigate(['/dashboard/history', historyId]);
-  }
-
-  goToGenerate(): void {
-    this.router.navigate(['/dashboard/generate']);
   }
 
   get favoriteRecipesCount(): number {

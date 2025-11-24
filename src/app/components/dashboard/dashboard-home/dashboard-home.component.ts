@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { Chart } from 'chart.js';
+import { HistoryService } from '../../../services/history.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -17,80 +19,107 @@ export class DashboardHomeComponent implements OnInit {
   historyCount = 0;
   thisWeekCount = 0;
   newRecipesThisMonth = 0;
+  isLoading = true;
 
-  recentActivities = [
-    {
-      icon: 'pi pi-sparkles',
-      colorClass: 'bg-purple-500',
-      title: 'Recetas generadas',
-      description: '3 nuevas recetas de pasta italiana',
-      time: 'Hace 2 horas',
-    },
-    {
-      icon: 'pi pi-star',
-      colorClass: 'bg-yellow-500',
-      title: 'Añadido a favoritos',
-      description: 'Pasta Carbonara marcada como favorita',
-      time: 'Hace 5 horas',
-    },
-    {
-      icon: 'pi pi-trash',
-      colorClass: 'bg-red-500',
-      title: 'Historial eliminado',
-      description: 'Entrada del 15 de enero eliminada',
-      time: 'Hace 1 día',
-    },
-  ];
+  recentActivities: any[] = [];
 
-
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private historyService: HistoryService
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboardStats();
-    // this.createCharts(); // Descomenta cuando quieras gráficos
   }
 
   loadDashboardStats(): void {
-    // Aquí cargarías las estadísticas reales desde tu servicio
-    // Ejemplo:
-    this.totalRecipes = 24;
-    this.totalFavorites = 8;
-    this.historyCount = 12;
-    this.thisWeekCount = 5;
-    this.newRecipesThisMonth = 7;
+    this.isLoading = true;
+
+    // Cargar todas las páginas de historial
+    forkJoin({
+      history: this.historyService.getHistory(1),
+      pages: this.historyService.getPageCount()
+    }).subscribe({
+      next: ({ history, pages }) => {
+        // Calcular estadísticas reales
+        this.historyCount = history.length;
+
+        // Contar total de recetas
+        this.totalRecipes = history.reduce((total, item) => {
+          return total + (item.generation.recetas?.length || 0);
+        }, 0);
+
+        // Contar favoritos
+        this.totalFavorites = history.filter(item => item.isFavorite).length;
+
+        // Contar recetas de esta semana
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        this.thisWeekCount = history.filter(item => {
+          return new Date(item.createdAt) > oneWeekAgo;
+        }).length;
+
+        // Contar recetas de este mes
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        this.newRecipesThisMonth = history.filter(item => {
+          return new Date(item.createdAt) > oneMonthAgo;
+        }).length;
+
+        // Generar actividad reciente
+        this.generateRecentActivities(history);
+
+        console.log('📊 Estadísticas cargadas:', {
+          totalRecipes: this.totalRecipes,
+          totalFavorites: this.totalFavorites,
+          historyCount: this.historyCount,
+          thisWeekCount: this.thisWeekCount
+        });
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Error cargando estadísticas:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
-  goToGenerate(): void {
-    this.router.navigate(['/dashboard/generate']);
+  generateRecentActivities(history: any[]): void {
+    // Tomar los últimos 3 items del historial
+    const recent = history.slice(0, 3);
+
+    this.recentActivities = recent.map(item => {
+      const recipeCount = item.generation.recetas?.length || 0;
+      const recipeName = item.generation.recetas?.[0]?.nombre || 'Receta';
+      const timeDiff = this.getTimeDifference(item.createdAt);
+
+      return {
+        icon: 'pi pi-sparkles',
+        colorClass: 'bg-purple-500',
+        title: 'Recetas generadas',
+        description: `${recipeCount} nuevas recetas: ${recipeName}`,
+        time: timeDiff
+      };
+    });
+  }
+
+  getTimeDifference(date: string): string {
+    const now = new Date();
+    const then = new Date(date);
+    const diffMs = now.getTime() - then.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `Hace ${diffMins} minutos`;
+    if (diffHours < 24) return `Hace ${diffHours} horas`;
+    return `Hace ${diffDays} días`;
   }
 
   goToHistory(): void {
     this.router.navigate(['/dashboard/history']);
-  }
-
-  private createCharts(): void {
-    // Gráfico de recetas por mes
-    const ctx = document.getElementById('recipesChart') as HTMLCanvasElement;
-    if (ctx) {
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-          datasets: [{
-            label: 'Recetas Generadas',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: 'rgba(147, 51, 234, 0.8)',
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            }
-          }
-        }
-      });
-    }
   }
 }

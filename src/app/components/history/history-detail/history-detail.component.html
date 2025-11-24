@@ -1,81 +1,134 @@
 <div class="p-6">
-      <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-6 flex items-center justify-between">
-          <button 
-            class="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold"
-            (click)="goBack()">
-            <i class="pi pi-arrow-left"></i>
-            Volver al historial
-          </button>
-          
-          <p-button 
-            label="Regenerar Recetas" 
-            icon="pi pi-refresh"
-            (onClick)="regenerate()"
-            severity="secondary">
-          </p-button>
-        </div>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6 flex items-center justify-between">
+      <button class="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold" (click)="goBack()">
+        <i class="pi pi-arrow-left"></i>
+        Volver al historial
+      </button>
+    </div>
 
-        <div *ngIf="historyItem" class="grid lg:grid-cols-3 gap-6">
-          <!-- Imagen y metadatos -->
-          <div class="lg:col-span-1">
-            <p-card>
-              <div class="text-center">
-                <img 
-                  [src]="historyItem.imageUrl" 
-                  alt="Ingredientes"
-                  class="w-full rounded-lg mb-4 shadow-lg"
-                />
-                
-                <div class="space-y-3 text-left">
-                  <div class="flex items-center gap-2 text-gray-600">
-                    <i class="pi pi-calendar"></i>
-                    <span class="text-sm">{{ historyItem.createdAt | date:'medium' }}</span>
-                  </div>
-                  <!-- 
-                  <div class="flex items-center gap-2">
-                    <i class="pi pi-book text-purple-600"></i>
-                    <span class="font-semibold">
-                      {{ historyItem.generation.recetas.length }} Recetas Generadas
-                    </span>
-                  </div>-->
-                  
-                  <p-divider></p-divider>
-                  
-                  <button 
-                    class="w-full py-2 rounded-lg transition-all duration-300"
-                    [class]="historyItem.isFavorite 
+    <div *ngIf="historyItem" class="grid lg:grid-cols-3 gap-6">
+      <!-- Imagen y metadatos -->
+      <div class="lg:col-span-1">
+        <p-card>
+          <div class="text-center">
+            <img [src]="historyItem.imageUrl" alt="Ingredientes" class="w-full rounded-lg mb-4 shadow-lg" />
+
+            <div class="space-y-3 text-left">
+              <div class="flex items-center gap-2 text-gray-600">
+                <i class="pi pi-calendar"></i>
+                <span class="text-sm">{{ historyItem.createdAt | date:'medium' }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <i class="pi pi-book text-purple-600"></i>
+                <span class="font-semibold">
+                  {{ historyItem.generation.recetas.length }} Recetas Generadas
+                </span>
+              </div>
+
+              <p-divider></p-divider>
+
+              <button class="w-full py-2 rounded-lg transition-all duration-300" [class]="historyItem.isFavorite 
                       ? 'bg-yellow-400 text-white hover:bg-yellow-500' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                    (click)="toggleFavorite()">
-                    <i [class]="historyItem.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"></i>
-                    {{ historyItem.isFavorite ? 'Favorito' : 'Marcar como favorito' }}
-                  </button>
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'" (click)="toggleFavorite()">
+                <i [class]="historyItem.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"></i>
+                {{ historyItem.isFavorite ? 'Favorito' : 'Marcar como favorito' }}
+              </button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Recetas -->
+      <div class="lg:col-span-2">
+        <p-card>
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            <i class="pi pi-list mr-2"></i>
+            Recetas Generadas
+          </h2>
+
+          <p-tabView>
+            <p-tabPanel *ngFor="let receta of historyItem.generation.recetas; let i = index" [header]="receta.nombre">
+
+              <div class="space-y-6">
+                <!-- Descripción -->
+                <div>
+                  <p class="text-gray-600 leading-relaxed">
+                    {{ receta.descripcion }}
+                  </p>
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Tiempo de preparación -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-clock text-purple-600 text-xl"></i>
+                    <div>
+                      <p class="text-sm text-gray-600">Tiempo de preparación</p>
+                      <p class="font-semibold text-purple-700">{{ receta.tiempoPreparacion }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ingredientes -->
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="pi pi-shopping-cart text-green-600"></i>
+                    Ingredientes
+                  </h3>
+                  <ul class="grid md:grid-cols-2 gap-3">
+                    <li *ngFor="let ingrediente of receta.ingredientes"
+                      class="flex items-start gap-2 bg-white p-3 rounded-lg shadow-sm">
+                      <i class="pi pi-check text-green-500 mt-1"></i>
+                      <span [class.text-purple-600]="ingrediente.includes('(sugerido)')">
+                        {{ ingrediente }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Instrucciones -->
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="pi pi-list-check text-blue-600"></i>
+                    Instrucciones
+                  </h3>
+                  <ol class="space-y-4">
+                    <li *ngFor="let paso of receta.instrucciones; let j = index"
+                      class="flex gap-4 bg-white p-4 rounded-lg shadow-sm">
+                      <div class="flex-shrink-0">
+                        <span
+                          class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full font-bold">
+                          {{ j + 1 }}
+                        </span>
+                      </div>
+                      <p class="flex-1 text-gray-700 leading-relaxed">{{ paso }}</p>
+                    </li>
+                  </ol>
+                </div>
+
+                <!-- Botón de compartir o imprimir -->
+                <div class="flex gap-3 pt-4">
+                  <p-button label="Imprimir" icon="pi pi-print" styleClass="p-button-outlined">
+                  </p-button>
+                  <p-button label="Compartir" icon="pi pi-share-alt" styleClass="p-button-outlined">
+                  </p-button>
                 </div>
               </div>
-            </p-card>
-          </div>
-
-          <!-- Recetas -->
-          <div class="lg:col-span-2">
-            <p-card>
-              <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                <i class="pi pi-list mr-2"></i>
-                Recetas Generadas
-              </h2>
-              
-              <p-tabView>
-                <!--- Imagen y metadatos  --->
-
-              </p-tabView>
-            </p-card>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <div *ngIf="!historyItem" class="flex justify-center py-20">
-          <i class="pi pi-spin pi-spinner text-6xl text-purple-600"></i>
-        </div>
+            </p-tabPanel>
+          </p-tabView>
+        </p-card>
       </div>
     </div>
+
+    <!-- Loading State -->
+    <div *ngIf="!historyItem" class="flex justify-center py-20">
+      <i class="pi pi-spin pi-spinner text-6xl text-purple-600"></i>
+    </div>
+  </div>
+</div>

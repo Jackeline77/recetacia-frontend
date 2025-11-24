@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GenerateComponent } from './generate.component';
+import { AuthImageComponent } from './auth-image.component';
 
-describe('GenerateComponent', () => {
-  let component: GenerateComponent;
-  let fixture: ComponentFixture<GenerateComponent>;
+describe('AuthImageComponent', () => {
+  let component: AuthImageComponent;
+  let fixture: ComponentFixture<AuthImageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GenerateComponent]
+      imports: [AuthImageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GenerateComponent);
+    fixture = TestBed.createComponent(AuthImageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -30,9 +30,9 @@ import { AuthService } from '../../services/auth.service';
     InputTextModule,
     MessageModule,
     CheckboxModule,
-    DialogModule,        // Para p-dialog
-    ScrollPanelModule,   // Para p-scrollpanel
-    ButtonModule         // Para p-button
+    DialogModule,       
+    ScrollPanelModule,   
+    ButtonModule         
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',

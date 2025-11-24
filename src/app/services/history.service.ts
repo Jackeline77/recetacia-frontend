@@ -1,4 +1,3 @@
-// src/app/services/history.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
@@ -26,7 +25,7 @@ export interface PageInfo {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HistoryService {
   private apiUrl = 'http://localhost:3000/history';
@@ -34,7 +33,12 @@ export class HistoryService {
   constructor(private http: HttpClient) { }
 
   getHistory(page: number = 1): Observable<HistoryItem[]> {
-    return this.http.get<HistoryItem[]>(`${this.apiUrl}?page=${page}`);
+    return this.http.get<HistoryItem[]>(`${this.apiUrl}?page=${page}`).pipe(
+      map(items => items.map(item => ({
+        ...item,
+        imageUrl: `${this.apiUrl}/image/${item.id}`
+      })))
+    );
   }
 
   getImage(historyId: number): string {
@@ -52,25 +56,21 @@ export class HistoryService {
   deleteHistory(historyId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${historyId}`);
   }
-
   // Para regenerar recetas con la misma imagen
   regenerateRecipes(historyId: number, suggestIngredients: boolean = false): Observable<any> {
     return this.http.post(`http://localhost:3000/recetacia/regenerate/${historyId}`, {
       suggestIngredients
     });
   }
-
   // Obtener solo favoritos
   getFavorites(): Observable<HistoryItem[]> {
     // Nota: El backend no tiene endpoint específico para favoritos
     // Así que filtramos del historial
     return this.getHistory(1).pipe(
-      map((items: HistoryItem[]) => items.filter(item => item.isFavorite))
+      map((items: HistoryItem[]) => items.filter((item) => item.isFavorite))
     );
   }
 }
-
-
 
 /*
 // services/history.service.ts

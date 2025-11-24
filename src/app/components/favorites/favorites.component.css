@@ -1,0 +1,43 @@
+:host ::ng-deep {
+  .favorite-card .p-card {
+    border-radius: 1rem;
+    height: 100%;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .favorite-card:hover .p-card {
+    border-color: #fbbf24;
+  }
+
+  .favorite-card .p-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .favorite-card .p-card-content {
+    flex: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -9,6 +9,7 @@ import { TagModule, Tag } from 'primeng/tag';
 import { ToastModule, Toast } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
+import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
 
 @Component({
   selector: 'app-favorites',

@@ -89,21 +89,7 @@ export const routes: Routes = [
           import('./components/recipes/recipes.component').then(
             (m) => m.RecipesComponent
           ),
-      } /*
-      {
-        path: 'settings',
-        loadComponent: () =>
-          import('./components/settings/settings.component').then(
-            (m) => m.SettingsComponent
-          ),
-      },
-      {
-        path: 'help',
-        loadComponent: () =>
-          import('./components/help/help.component').then(
-            (m) => m.HelpComponent
-          ),
-      },*/,
+      } 
     ],
   },
   {

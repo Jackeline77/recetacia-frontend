@@ -10,18 +10,24 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
+import { AuthImageComponent } from '../../shared/auth-image/auth-image.component';
 
 @Component({
   selector: 'app-history-list',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     CardModule,
     ButtonModule,
     PaginatorModule,
     TagModule,
     ConfirmDialogModule,
-    ToastModule],
+    ToastModule,
+    TooltipModule,
+    ButtonModule,
+  ],
   templateUrl: './history-list.component.html',
-  styleUrl: './history-list.component.css'
+  styleUrl: './history-list.component.css',
 })
 export class HistoryListComponent implements OnInit {
   historyItems: HistoryItem[] = [];
@@ -35,7 +41,7 @@ export class HistoryListComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadHistory();
@@ -54,10 +60,10 @@ export class HistoryListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo cargar el historial'
+          detail: 'No se pudo cargar el historial',
         });
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -65,35 +71,12 @@ export class HistoryListComponent implements OnInit {
     this.historyService.getPageCount().subscribe({
       next: (data) => {
         this.totalPages = data.totalPages;
-      }
+      },
     });
   }
 
   viewDetails(historyId: number): void {
-    this.router.navigate(['/history', historyId]);
-  }
-
-  regenerate(historyId: number): void {
-    this.loadingService.show('Regenerando recetas...');
-    this.historyService.regenerateRecipes(historyId).subscribe({
-      next: (response) => {
-        this.loadingService.hide();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Recetas regeneradas correctamente'
-        });
-        this.router.navigate(['/history', historyId]);
-      },
-      error: (error) => {
-        this.loadingService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudieron regenerar las recetas'
-        });
-      }
-    });
+    this.router.navigate(['/dashboard/history', historyId]);
   }
 
   toggleFavorite(item: HistoryItem): void {
@@ -102,17 +85,21 @@ export class HistoryListComponent implements OnInit {
         item.isFavorite = !item.isFavorite;
         this.messageService.add({
           severity: 'success',
-          summary: item.isFavorite ? 'Añadido a favoritos' : 'Quitado de favoritos',
-          detail: item.isFavorite ? 'La receta fue marcada como favorita' : 'La receta fue desmarcada'
+          summary: item.isFavorite
+            ? 'Añadido a favoritos'
+            : 'Quitado de favoritos',
+          detail: item.isFavorite
+            ? 'La receta fue marcada como favorita'
+            : 'La receta fue desmarcada',
         });
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo actualizar el favorito'
+          detail: 'No se pudo actualizar el favorito',
         });
-      }
+      },
     });
   }
 
@@ -126,7 +113,7 @@ export class HistoryListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.deleteHistory(historyId);
-      }
+      },
     });
   }
 
@@ -138,7 +125,7 @@ export class HistoryListComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Eliminado',
-          detail: 'Historial eliminado correctamente'
+          detail: 'Historial eliminado correctamente',
         });
         this.loadHistory();
       },
@@ -147,18 +134,14 @@ export class HistoryListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo eliminar el historial'
+          detail: 'No se pudo eliminar el historial',
         });
-      }
+      },
     });
   }
 
   onPageChange(event: any): void {
     this.currentPage = event.page + 1;
     this.loadHistory();
-  }
-
-  goToGenerate(): void {
-    this.router.navigate(['/generate']);
   }
 }

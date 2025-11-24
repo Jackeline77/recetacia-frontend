@@ -10,7 +10,11 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div *ngFor="let i of [1,2,3,4]" class="bg-gray-200 rounded-xl h-32 animate-pulse"></div>
+  </div>
+
+  <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <!-- Card 1: Total Recetas -->
     <div
       class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
@@ -21,9 +25,7 @@
         <span class="text-3xl font-bold">{{ totalRecipes }}</span>
       </div>
       <p class="text-purple-100 font-medium">Recetas Generadas</p>
-      <p class="text-sm text-purple-200 mt-1">
-        +{{ newRecipesThisMonth }} este mes
-      </p>
+      <p class="text-sm text-purple-200 mt-1">+{{ newRecipesThisMonth }} este mes</p>
     </div>
 
     <!-- Card 2: Favoritos -->
@@ -76,14 +78,8 @@
           <i class="pi pi-sparkles text-white text-3xl"></i>
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-gray-800 mb-2">
-            Generar Nuevas Recetas
-          </h3>
-          <p class="text-gray-600 mb-4">
-            Sube una foto de tus ingredientes y obtén recetas instantáneas
-          </p>
-          <p-button label="Comenzar" icon="pi pi-arrow-right" (onClick)="goToGenerate()" styleClass="p-button-raised">
-          </p-button>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Generar Nuevas Recetas</h3>
+          <p class="text-gray-600 mb-4">Sube una foto de tus ingredientes y obtén recetas instantáneas</p>
         </div>
       </div>
     </p-card>
@@ -97,21 +93,12 @@
         </div>
         <div class="flex-1">
           <h3 class="text-xl font-bold text-gray-800 mb-2">Ver Mi Historial</h3>
-          <p class="text-gray-600 mb-4">
-            Revisa todas las recetas que has generado anteriormente
-          </p>
+          <p class="text-gray-600 mb-4">Revisa todas las recetas que has generado anteriormente</p>
           <p-button label="Ver Historial" icon="pi pi-arrow-right" (onClick)="goToHistory()"
             styleClass="p-button-raised p-button-secondary">
           </p-button>
         </div>
       </div>
-    </p-card>
-  </div>
-
-  <!-- Después de la sección de Quick Actions -->
-  <div class="mb-8">
-    <p-card header="Estadísticas Mensuales">
-      <canvas id="recipesChart"></canvas>
     </p-card>
   </div>
 
@@ -127,25 +114,29 @@
     </ng-template>
 
     <div class="space-y-4">
-      <div *ngFor="let activity of recentActivities"
-        class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-        <div [class]="
-            'w-12 h-12 rounded-full flex items-center justify-center ' +
-            activity.colorClass
-          ">
-          <i [class]="activity.icon + ' text-white'"></i>
+      <div *ngIf="isLoading" class="text-center py-8">
+        <i class="pi pi-spin pi-spinner text-4xl text-purple-600"></i>
+        <p class="text-gray-600 mt-4">Cargando actividad...</p>
+      </div>
+
+      <div *ngIf="!isLoading" class="space-y-4">
+        <div *ngFor="let activity of recentActivities"
+          class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div [class]="'w-12 h-12 rounded-full flex items-center justify-center ' + activity.colorClass">
+            <i [class]="activity.icon + ' text-white'"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-800">{{ activity.title }}</p>
+            <p class="text-sm text-gray-600">{{ activity.description }}</p>
+          </div>
+          <span class="text-sm text-gray-500">{{ activity.time }}</span>
         </div>
-        <div class="flex-1">
-          <p class="font-semibold text-gray-800">{{ activity.title }}</p>
-          <p class="text-sm text-gray-600">{{ activity.description }}</p>
-        </div>
-        <span class="text-sm text-gray-500">{{ activity.time }}</span>
+      </div>
+
+      <div *ngIf="recentActivities.length === 0" class="text-center py-8">
+        <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500">No hay actividad reciente</p>
       </div>
     </div>
-
-    <div *ngIf="recentActivities.length === 0" class="text-center py-8">
-      <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
-      <p class="text-gray-500">No hay actividad reciente</p>
-    </div>
-  </p-card>
+  </p-card> 
 </div>
