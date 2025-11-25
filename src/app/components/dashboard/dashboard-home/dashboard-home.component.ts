@@ -13,23 +13,24 @@ import { forkJoin } from 'rxjs';
   styleUrl: './dashboard-home.component.css',
 })
 export class DashboardHomeComponent implements OnInit {
-  totalRecipes = 0;           // ✅ AÑADIDO: Total de recetas
-  recipesToday = 0;           // ✅ AÑADIDO: Recetas generadas hoy
+  totalRecipes = 0; // ✅ AÑADIDO: Total de recetas
+  recipesToday = 0; // ✅ AÑADIDO: Recetas generadas hoy
   totalFavorites = 0;
   historyCount = 0;
   thisWeekCount = 0;
-  newRecipesThisMonth = 0;    // Cambiado a contar recetas, no items
+  newRecipesThisMonth = 0; // Cambiado a contar recetas, no items
   isLoading = true;
 
   recentActivities: any[] = [];
 
-  constructor(
-    private router: Router,
-    private historyService: HistoryService
-  ) { }
+  constructor(private router: Router, private historyService: HistoryService) {}
 
   ngOnInit(): void {
     this.loadDashboardStats();
+  }
+
+  goToGenerate() {
+    this.router.navigate(['/dashboard/generate']);
   }
 
   loadDashboardStats(): void {
@@ -38,7 +39,7 @@ export class DashboardHomeComponent implements OnInit {
     // Cargar todas las páginas de historial
     forkJoin({
       history: this.historyService.getHistory(1),
-      pages: this.historyService.getPageCount()
+      pages: this.historyService.getPageCount(),
     }).subscribe({
       next: ({ history, pages }) => {
         // Calcular estadísticas reales
@@ -50,13 +51,13 @@ export class DashboardHomeComponent implements OnInit {
         }, 0);
 
         // Contar favoritos
-        this.totalFavorites = history.filter(item => item.isFavorite).length;
+        this.totalFavorites = history.filter((item) => item.isFavorite).length;
 
         // Contar items de esta semana (no recetas)
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        this.thisWeekCount = history.filter(item => {
+        this.thisWeekCount = history.filter((item) => {
           return new Date(item.createdAt) > oneWeekAgo;
         }).length;
 
@@ -94,7 +95,7 @@ export class DashboardHomeComponent implements OnInit {
           totalFavorites: this.totalFavorites,
           historyCount: this.historyCount,
           thisWeekCount: this.thisWeekCount,
-          newRecipesThisMonth: this.newRecipesThisMonth
+          newRecipesThisMonth: this.newRecipesThisMonth,
         });
 
         this.isLoading = false;
@@ -102,7 +103,7 @@ export class DashboardHomeComponent implements OnInit {
       error: (error) => {
         console.error('❌ Error cargando estadísticas:', error);
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -115,9 +116,12 @@ export class DashboardHomeComponent implements OnInit {
     // Tomar los últimos 3 items del historial
     const recent = history.slice(0, 3);
 
-    this.recentActivities = recent.map(item => {
+    this.recentActivities = recent.map((item) => {
       const recipeCount = this.getRecipes(item).length;
-      const recipeName = this.getRecipes(item)[0]?.nombre || this.getRecipes(item)[0]?.title || 'Receta';
+      const recipeName =
+        this.getRecipes(item)[0]?.nombre ||
+        this.getRecipes(item)[0]?.title ||
+        'Receta';
       const timeDiff = this.getTimeDifference(item.createdAt);
 
       return {
@@ -125,7 +129,7 @@ export class DashboardHomeComponent implements OnInit {
         colorClass: 'bg-purple-500',
         title: 'Recetas generadas',
         description: `${recipeCount} nuevas recetas: ${recipeName}`,
-        time: timeDiff
+        time: timeDiff,
       };
     });
   }

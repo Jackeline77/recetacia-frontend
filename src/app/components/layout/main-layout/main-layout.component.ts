@@ -28,10 +28,10 @@ interface CustomMenuItem extends MenuItem {
     MenuModule,
     BadgeModule,
     RippleModule,
-    DrawerModule
+    DrawerModule,
   ],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrl: './main-layout.component.css',
 })
 export class MainLayoutComponent implements OnInit {
   sidebarVisible = false;
@@ -43,7 +43,12 @@ export class MainLayoutComponent implements OnInit {
     {
       label: 'Dashboard',
       icon: 'pi pi-home',
-      route: '/dashboard'
+      route: '/dashboard',
+    },
+    {
+      label: 'Escanear',
+      icon: 'pi pi-camera',
+      route: '/dashboard/generate',
     },
     {
       label: 'Historial',
@@ -53,19 +58,16 @@ export class MainLayoutComponent implements OnInit {
     {
       label: 'Mis Favoritos',
       icon: 'pi pi-star-fill',
-      route: '/dashboard/favorites'
+      route: '/dashboard/favorites',
     },
     {
       label: 'Mis Recetas',
       icon: 'pi pi-book',
-      route: '/dashboard/recipes'
-    }
+      route: '/dashboard/recipes',
+    },
   ];
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     // Puedes cargar datos del usuario aquí

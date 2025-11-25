@@ -10,16 +10,28 @@
   </div>
 
   <!-- Stats Cards -->
-  <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div *ngFor="let i of [1,2,3,4]" class="bg-gray-200 rounded-xl h-32 animate-pulse"></div>
+  <div
+    *ngIf="isLoading"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+  >
+    <div
+      *ngFor="let i of [1, 2, 3, 4]"
+      class="bg-gray-200 rounded-xl h-32 animate-pulse"
+    ></div>
   </div>
 
-  <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div
+    *ngIf="!isLoading"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+  >
     <!-- Card 1: Total Recetas -->
     <div
-      class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+      class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
+    >
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+        <div
+          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
+        >
           <i class="pi pi-book text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ totalRecipes }}</span>
@@ -30,9 +42,12 @@
 
     <!-- Card 2: Favoritos -->
     <div
-      class="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+      class="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
+    >
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+        <div
+          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
+        >
           <i class="pi pi-star-fill text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ totalFavorites }}</span>
@@ -43,9 +58,12 @@
 
     <!-- Card 3: Historial -->
     <div
-      class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+      class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
+    >
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+        <div
+          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
+        >
           <i class="pi pi-history text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ historyCount }}</span>
@@ -56,9 +74,12 @@
 
     <!-- Card 4: Esta Semana -->
     <div
-      class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+      class="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow"
+    >
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+        <div
+          class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center"
+        >
           <i class="pi pi-chart-line text-2xl"></i>
         </div>
         <span class="text-3xl font-bold">{{ thisWeekCount }}</span>
@@ -67,21 +88,51 @@
       <p class="text-sm text-green-200 mt-1">Nuevas generaciones</p>
     </div>
   </div>
-
-  <!-- Quick Actions - SOLO HISTORIAL -->
-  <div class="grid lg:grid-cols-1 gap-6 mb-8">
-    <!-- History Card -->
-    <p-card class="hover:shadow-lg transition-shadow">
-      <div class="flex items-center gap-6">
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- New Card: Generate/Scan -->
+    <p-card class="hover:shadow-lg transition-shadow h-full">
+      <div class="flex items-center gap-6 h-full">
         <div
-          class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center flex-shrink-0">
+          class="w-20 h-20 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md"
+        >
+          <i class="pi pi-camera text-white text-3xl"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Nueva Receta</h3>
+          <p class="text-gray-600 mb-4">
+            Sube una foto de tus ingredientes y deja que la IA cocine por ti.
+          </p>
+          <p-button
+            label="Escanear Ahora"
+            icon="pi pi-sparkles"
+            (onClick)="goToGenerate()"
+            styleClass="p-button-raised p-button-warning"
+          >
+          </p-button>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Existing Card: History -->
+    <p-card class="hover:shadow-lg transition-shadow h-full">
+      <div class="flex items-center gap-6 h-full">
+        <div
+          class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md"
+        >
           <i class="pi pi-history text-white text-3xl"></i>
         </div>
         <div class="flex-1">
           <h3 class="text-xl font-bold text-gray-800 mb-2">Ver Mi Historial</h3>
-          <p class="text-gray-600 mb-4">Revisa todas las recetas que has generado anteriormente</p>
-          <p-button label="Ver Historial" icon="pi pi-arrow-right" (onClick)="goToHistory()"
-            styleClass="p-button-raised p-button-secondary">
+          <p class="text-gray-600 mb-4">
+            Revisa todas las recetas que has generado anteriormente.
+          </p>
+          <p-button
+            label="Ver Historial"
+            icon="pi pi-arrow-right"
+            (onClick)="goToHistory()"
+            styleClass="p-button-raised p-button-secondary"
+          >
           </p-button>
         </div>
       </div>
@@ -106,9 +157,16 @@
       </div>
 
       <div *ngIf="!isLoading" class="space-y-4">
-        <div *ngFor="let activity of recentActivities"
-          class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-          <div [class]="'w-12 h-12 rounded-full flex items-center justify-center ' + activity.colorClass">
+        <div
+          *ngFor="let activity of recentActivities"
+          class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <div
+            [class]="
+              'w-12 h-12 rounded-full flex items-center justify-center ' +
+              activity.colorClass
+            "
+          >
             <i [class]="activity.icon + ' text-white'"></i>
           </div>
           <div class="flex-1">

@@ -63,6 +63,13 @@ export const routes: Routes = [
           ).then((m) => m.DashboardHomeComponent),
       },
       {
+        path: 'generate',
+        loadComponent: () =>
+          import(
+            './components/recipes/generate-recipe/generate-recipe.component'
+          ).then((m) => m.GenerateRecipeComponent),
+      },
+      {
         path: 'history',
         loadComponent: () =>
           import(
@@ -89,7 +96,7 @@ export const routes: Routes = [
           import('./components/recipes/recipes.component').then(
             (m) => m.RecipesComponent
           ),
-      } 
+      },
     ],
   },
   {
