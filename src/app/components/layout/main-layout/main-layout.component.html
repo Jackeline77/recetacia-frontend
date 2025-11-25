@@ -1,15 +1,20 @@
-<div class="card flex justify-center h-screen overflow-hidden ">
-  <aside class="w-80  shadow-lg flex-shrink-0 hidden lg:flex flex-col border-r border-orange-300 bg-orange-100">
+<div class="card flex justify-center h-screen overflow-hidden">
+  <!-- Sidebar principal -->
+  <aside class="w-80 shadow-lg flex-shrink-0 hidden lg:flex flex-col border-r transition-colors duration-300"
+          [class]="isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-orange-300 bg-orange-100'">
 
     <!-- Logo / Header -->
-    <div class="p-3 border-b border-orange-200">
-      <div class="flex items-center gap-2 ">
+    <div class="p-3 transition-colors duration-300" 
+         [class]="isDarkMode ? 'border-b border-gray-700' : 'border-b border-orange-200'">
+      <div class="flex items-center gap-2">
         <div>
           <img class="w-28 h-20" src="logo_sin_letra.png" />
         </div>
         <div>
-          <p class="text-4xl font-bold text-primary-600">Recetacia</p>
-          <p class="text-2sm text-primary-800">Tu recetario digital</p>
+          <p class="text-4xl font-bold transition-colors duration-300" 
+             [class]="isDarkMode ? 'text-white' : 'text-primary-600'">Recetacia</p>
+          <p class="text-2sm transition-colors duration-300" 
+             [class]="isDarkMode ? 'text-gray-300' : 'text-primary-800'">Tu recetario digital</p>
         </div>
       </div>
     </div>
@@ -19,45 +24,73 @@
       <p-menu [model]="menuItems" [style]="{'background': 'transparent', 'border': 'none'}" [popup]="false">
         <ng-template #item let-item>
           <a pRipple (click)="selectMenu(item)"
-            class="flex items-center gap-3 p-menu-item-link hover:bg-orange-200 transition-colors duration-200 rounded-lg w-full px-3 py-3"
-            [routerLink]="item.route" [class.bg-orange-800]="isSelected(item)">
-            <span [class]="item.icon + ' icon-extra-large text-primary-800'"
-              [class.text-white]="isSelected(item)"></span>
-            <span class="font-medium text-lg  text-primary-900" [class.text-white]="isSelected(item)">{{ item.label
-              }}</span>
+            class="flex items-center gap-3 p-menu-item-link transition-colors duration-200 rounded-lg w-full px-3 py-3"
+            [routerLink]="item.route" 
+            [class]="isSelected(item) 
+              ? (isDarkMode ? 'bg-gray-700 text-white' : 'bg-orange-800 text-white')
+              : (isDarkMode 
+                  ? 'hover:bg-gray-700 text-gray-200' 
+                  : 'hover:bg-orange-200 text-primary-900')">
+            <!-- Icono corregido - usar <i> para PrimeIcons -->
+            <i [class]="getIconClasses(item)"></i>
+            <span class="font-medium text-lg transition-colors duration-300"
+                  [class]="isSelected(item) ? 'text-white' : (isDarkMode ? 'text-gray-200' : 'text-primary-900')">
+              {{ item.label }}
+            </span>
           </a>
         </ng-template>
       </p-menu>
     </div>
 
     <!-- User Profile & Logout -->
-<div class="p-4 border-t border-orange-200">
-  <p-menu styleClass="w-full border-none bg-transparent" [style]="{'background': 'transparent', 'border': 'none'}" [popup]="false">
-    <ng-template #end>
-      <button pRipple (click)="logout()"
-        class="relative overflow-hidden w-full border-0 flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 mx-2 mt-2">
-        <i class="pi pi-sign-out text-amber-700"></i>
-        <span class="text-lg ml-3 font-medium text-amber-800">Cerrar Sesión</span>
-      </button>
-    </ng-template>
-  </p-menu>
-</div>
+    <div class="p-4 transition-colors duration-300" 
+         [class]="isDarkMode ? 'border-t border-gray-700' : 'border-t border-orange-200'">
+      <div class="flex justify-between items-center">
+        <!-- Botón Cerrar Sesión -->
+        <button pRipple (click)="logout()"
+          class="relative overflow-hidden border-0 flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200"
+          [class]="isDarkMode 
+            ? 'hover:bg-gray-700 text-gray-200' 
+            : 'hover:bg-orange-200 text-amber-800'">
+          <i class="pi pi-sign-out" [class]="isDarkMode ? 'text-gray-300' : 'text-amber-700'"></i>
+          <span class="text-lg ml-3 font-medium">Cerrar Sesión</span>
+        </button>
+        
+        <!-- Botón Modo Oscuro/Claro -->
+        <p-button
+          [icon]="isDarkMode ? 'pi pi-sun' : 'pi pi-moon'"
+          aria-label="Toggle theme"
+          [rounded]="true"
+          [raised]="true"
+          [styleClass]="isDarkMode 
+            ? 'bg-gray-700 hover:bg-gray-600 text-white border-gray-600' 
+            : 'bg-amber-800 hover:bg-amber-600 text-white border-amber-500'"
+          (click)="toggleDarkMode()"
+        />
+      </div>
+    </div>
   </aside>
 
-  <!-- Mobile Sidebar (Simplificado) -->
-  <p-sidebar [(visible)]="sidebarVisible" [baseZIndex]="10000" styleClass="bg-amber-100 shadow-xl w-80 p-0">
+  <!-- Mobile Sidebar -->
+  <p-sidebar [(visible)]="sidebarVisible" [baseZIndex]="10000" 
+             [styleClass]="isDarkMode ? 'bg-gray-800 shadow-xl w-80 p-0' : 'bg-amber-100 shadow-xl w-80 p-0'">
 
     <div class="h-full flex flex-col">
       <!-- Logo Mobile -->
-      <div class="p-6 border-b border-amber-200">
+      <div class="p-6 transition-colors duration-300" 
+           [class]="isDarkMode ? 'border-b border-gray-700' : 'border-b border-amber-200'">
         <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-            <i class="pi pi-book text-white text-lg"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-300"
+               [class]="isDarkMode 
+                 ? 'bg-gradient-to-br from-gray-600 to-gray-700' 
+                 : 'bg-gradient-to-br from-amber-500 to-amber-600'">
+            <i class="pi pi-book text-lg" [class]="isDarkMode ? 'text-gray-300' : 'text-white'"></i>
           </div>
           <div>
-            <h1 class="text-xl font-bold text-amber-800">Recetacia</h1>
-            <p class="text-xs text-amber-600">Tu recetario digital</p>
+            <h1 class="text-xl font-bold transition-colors duration-300" 
+                [class]="isDarkMode ? 'text-white' : 'text-amber-800'">Recetacia</h1>
+            <p class="text-xs transition-colors duration-300" 
+               [class]="isDarkMode ? 'text-gray-400' : 'text-amber-600'">Tu recetario digital</p>
           </div>
         </div>
       </div>
@@ -67,9 +100,14 @@
         <ul class="space-y-2">
           <li *ngFor="let item of menuItems">
             <a [routerLink]="item.route" (click)="selectMenu(item)"
-              class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-amber-200 transition-all duration-200 cursor-pointer"
-              [class.bg-amber-200]="isSelected(item)" [class.text-amber-900]="isSelected(item)">
-              <i [class]="item.icon + ' text-lg text-amber-700'"></i>
+              class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer"
+              [class]="isSelected(item) 
+                ? (isDarkMode ? 'bg-gray-700 text-white' : 'bg-amber-200 text-amber-900')
+                : (isDarkMode 
+                    ? 'hover:bg-gray-700 text-gray-200' 
+                    : 'hover:bg-amber-200 text-amber-800')">
+              <!-- Icono móvil corregido -->
+              <i [class]="getMobileIconClasses(item)"></i>
               <span class="font-medium">{{ item.label }}</span>
             </a>
           </li>
@@ -77,9 +115,13 @@
       </div>
 
       <!-- User Info & Logout Mobile -->
-      <div class="p-4 border-t border-amber-200">
+      <div class="p-4 transition-colors duration-300" 
+           [class]="isDarkMode ? 'border-t border-gray-700' : 'border-t border-amber-200'">
         <button (click)="logout()"
-          class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors font-medium">
+          class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors font-medium"
+          [class]="isDarkMode 
+            ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+            : 'bg-amber-600 hover:bg-amber-700 text-white'">
           <i class="pi pi-sign-out"></i>
           <span>Cerrar Sesión</span>
         </button>
@@ -90,24 +132,33 @@
   <!-- Main Content Area -->
   <div class="flex-1 flex flex-col overflow-hidden">
     <!-- Top Header (Mobile) -->
-    <header class="bg-amber-100 shadow-sm lg:hidden">
+    <header class="shadow-sm lg:hidden transition-colors duration-300"
+            [class]="isDarkMode ? 'bg-gray-800' : 'bg-amber-100'">
       <div class="flex items-center justify-between p-4">
-        <button (click)="sidebarVisible = true" class="p-2 hover:bg-amber-200 rounded-lg transition-colors">
-          <i class="pi pi-bars text-xl text-amber-700"></i>
+        <button (click)="sidebarVisible = true" 
+                class="p-2 rounded-lg transition-colors"
+                [class]="isDarkMode 
+                  ? 'hover:bg-gray-700 text-gray-300' 
+                  : 'hover:bg-amber-200 text-amber-700'">
+          <i class="pi pi-bars text-xl"></i>
         </button>
 
         <div class="flex items-center gap-3">
-          <span class="text-lg font-bold text-amber-800">Recetacia</span>
-          <div
-            class="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center">
-            <i class="pi pi-user text-white text-sm"></i>
+          <span class="text-lg font-bold transition-colors duration-300"
+                [class]="isDarkMode ? 'text-white' : 'text-amber-800'">Recetacia</span>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300"
+               [class]="isDarkMode 
+                 ? 'bg-gradient-to-br from-gray-600 to-gray-700' 
+                 : 'bg-gradient-to-br from-amber-500 to-amber-600'">
+            <i class="pi pi-user text-sm" [class]="isDarkMode ? 'text-gray-300' : 'text-white'"></i>
           </div>
         </div>
       </div>
     </header>
 
     <!-- Page Content -->
-    <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+    <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 transition-colors duration-300"
+          [class]="isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'">
       <router-outlet></router-outlet>
     </main>
   </div>

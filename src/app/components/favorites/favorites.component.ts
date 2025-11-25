@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
@@ -26,9 +26,11 @@ import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
   templateUrl: './favorites.component.html',
   styleUrl: './favorites.component.css'
 })
-export class FavoritesComponent implements OnInit {
+export class FavoritesComponent implements OnInit, OnDestroy {
   favoriteItems: any[] = [];
   isLoading = false;
+  isDarkMode = false;
+  private themeChangeListener?: () => void;
 
   constructor(
     private historyService: HistoryService,
@@ -39,6 +41,44 @@ export class FavoritesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFavorites();
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeChangeListener) {
+      this.themeChangeListener();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios en el tema
+    this.themeChangeListener = () => this.checkDarkMode();
+    
+    // Escuchar cambios en localStorage para tema
+    window.addEventListener('storage', this.themeChangeListener);
+    
+    // Escuchar cambios de clase en el html
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      observer.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    // Verificar si el tema oscuro está activo
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
   }
 
   loadFavorites(): void {

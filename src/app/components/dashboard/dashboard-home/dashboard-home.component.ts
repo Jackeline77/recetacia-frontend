@@ -1,25 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { HistoryService } from '../../../services/history.service';
 import { forkJoin } from 'rxjs';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-dashboard-home',
-  imports: [CommonModule, CardModule, ButtonModule],
+  imports: [CommonModule, CardModule, ButtonModule,ToastModule],
   templateUrl: './dashboard-home.component.html',
   styleUrl: './dashboard-home.component.css',
 })
-export class DashboardHomeComponent implements OnInit {
-  totalRecipes = 0; // ✅ AÑADIDO: Total de recetas
-  recipesToday = 0; // ✅ AÑADIDO: Recetas generadas hoy
+export class DashboardHomeComponent implements OnInit, OnDestroy {
+  totalRecipes = 0;
+  recipesToday = 0;
   totalFavorites = 0;
   historyCount = 0;
   thisWeekCount = 0;
-  newRecipesThisMonth = 0; // Cambiado a contar recetas, no items
+  newRecipesThisMonth = 0;
   isLoading = true;
+  isDarkMode = false;
+  private themeChangeListener?: () => void;
 
   recentActivities: any[] = [];
 
@@ -27,6 +30,46 @@ export class DashboardHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboardStats();
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeChangeListener) {
+      this.themeChangeListener();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios en el tema
+    this.themeChangeListener = () => this.checkDarkMode();
+    
+    // Escuchar cambios en localStorage para tema
+    window.addEventListener('storage', this.themeChangeListener);
+    
+    // Escuchar cambios de clase en el html
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      observer.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    // Verificar si el tema oscuro está activo
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
+    
+    console.log('🔍 Modo oscuro detectado:', this.isDarkMode);
   }
 
   goToGenerate() {
@@ -36,16 +79,12 @@ export class DashboardHomeComponent implements OnInit {
   loadDashboardStats(): void {
     this.isLoading = true;
 
-    // Cargar todas las páginas de historial
     forkJoin({
       history: this.historyService.getHistory(1),
       pages: this.historyService.getPageCount(),
     }).subscribe({
       next: ({ history, pages }) => {
-        // Calcular estadísticas reales
         this.historyCount = history.length;
-
-        // ✅ CONTAR TOTAL DE RECETAS
         this.totalRecipes = history.reduce((total, item) => {
           return total + (this.getRecipes(item).length || 0);
         }, 0);
@@ -53,7 +92,6 @@ export class DashboardHomeComponent implements OnInit {
         // Contar favoritos
         this.totalFavorites = history.filter((item) => item.isFavorite).length;
 
-        // Contar items de esta semana (no recetas)
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
@@ -61,7 +99,6 @@ export class DashboardHomeComponent implements OnInit {
           return new Date(item.createdAt) > oneWeekAgo;
         }).length;
 
-        // ✅ CONTAR RECETAS DE HOY
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -75,7 +112,6 @@ export class DashboardHomeComponent implements OnInit {
           return total;
         }, 0);
 
-        // ✅ CONTAR RECETAS DE ESTE MES (no items)
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
@@ -86,9 +122,9 @@ export class DashboardHomeComponent implements OnInit {
           return total;
         }, 0);
 
-        // Generar actividad reciente
         this.generateRecentActivities(history);
-
+        this.isLoading = false;
+        
         console.log('📊 Estadísticas cargadas:', {
           totalRecipes: this.totalRecipes,
           recipesToday: this.recipesToday,
@@ -97,8 +133,6 @@ export class DashboardHomeComponent implements OnInit {
           thisWeekCount: this.thisWeekCount,
           newRecipesThisMonth: this.newRecipesThisMonth,
         });
-
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('❌ Error cargando estadísticas:', error);
@@ -107,13 +141,11 @@ export class DashboardHomeComponent implements OnInit {
     });
   }
 
-  // ✅ MÉTODO PARA OBTENER RECETAS (maneja español e inglés)
   getRecipes(item: any): any[] {
     return item?.generation?.recetas || item?.generation?.recipes || [];
   }
 
   generateRecentActivities(history: any[]): void {
-    // Tomar los últimos 3 items del historial
     const recent = history.slice(0, 3);
 
     this.recentActivities = recent.map((item) => {
@@ -132,6 +164,8 @@ export class DashboardHomeComponent implements OnInit {
         time: timeDiff,
       };
     });
+    
+    console.log('📝 Actividades recientes generadas:', this.recentActivities);
   }
 
   getTimeDifference(date: string): string {
@@ -149,5 +183,11 @@ export class DashboardHomeComponent implements OnInit {
 
   goToHistory(): void {
     this.router.navigate(['/dashboard/history']);
+  }
+
+
+  // Método para forzar recarga del tema (útil para debugging)
+  refreshTheme(): void {
+    this.checkDarkMode();
   }
 }

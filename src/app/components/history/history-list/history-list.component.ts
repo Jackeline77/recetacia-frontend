@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HistoryService, HistoryItem } from '../../../services/history.service';
@@ -30,7 +30,7 @@ import { AuthImageComponent } from '../../shared/auth-image/auth-image.component
   templateUrl: './history-list.component.html',
   styleUrl: './history-list.component.css',
 })
-export class HistoryListComponent implements OnInit {
+export class HistoryListComponent implements OnInit, OnDestroy {
   private historyService = inject(HistoryService);
   private loadingService = inject(LoadingService);
   private confirmationService = inject(ConfirmationService);
@@ -41,16 +41,56 @@ export class HistoryListComponent implements OnInit {
   isLoading = true;
   currentPage = 1;
   totalPages = 1;
+  isDarkMode = false;
+  private themeChangeListener?: () => void;
+  private mutationObserver?: MutationObserver;
 
   ngOnInit(): void {
     this.loadHistory();
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeChangeListener) {
+      window.removeEventListener('storage', this.themeChangeListener);
+    }
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios en localStorage
+    this.themeChangeListener = () => this.checkDarkMode();
+    window.addEventListener('storage', this.themeChangeListener);
+    
+    // Escuchar cambios de clase en el html
+    this.mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      this.mutationObserver.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
   }
 
   loadHistory(): void {
     this.isLoading = true;
     this.historyService.getHistory(this.currentPage).subscribe({
       next: (historyItems: any[]) => {
-        // ✅ Ahora recibimos el array directamente
         this.historyItems = historyItems || [];
 
         // Obtener total de páginas por separado
@@ -103,44 +143,31 @@ export class HistoryListComponent implements OnInit {
   }
 
   // Método seguro para obtener tiempo de preparación - maneja español e inglés
-  //getRecipeTime(recipe: any): string {
-  //  return (
-  //    recipe?.tiempoPreparacion ||
-  //    (recipe?.prep_time_minutes
-  //      ? `${recipe.prep_time_minutes} minutos`
-  //      : 'Tiempo no especificado')
-  //  );
-  //}
-// Método seguro para obtener tiempo de preparación - versión simplificada
-getRecipeTime(recipe: any): string {
-  if (!recipe) return 'Tiempo no especificado';
+  getRecipeTime(recipe: any): string {
+    if (!recipe) return 'Tiempo no especificado';
 
-  // Buscar en propiedades de tiempo
-  const tiempo = recipe.tiempoPreparacion || 
-                recipe.prep_time_minutes || 
-                recipe.preparation_time;
+    const tiempo = recipe.tiempoPreparacion || 
+                  recipe.prep_time_minutes || 
+                  recipe.preparation_time;
 
-  // Si no hay tiempo, retornar mensaje por defecto
-  if (!tiempo) return 'Tiempo no especificado';
+    if (!tiempo) return 'Tiempo no especificado';
 
-  // Si ya es un string con formato, usarlo directamente
-  if (typeof tiempo === 'string') {
-    return tiempo;
-  }
-
-  // Si es número, formatearlo
-  if (typeof tiempo === 'number') {
-    if (tiempo < 60) {
-      return `${tiempo} min`;
-    } else {
-      const horas = Math.floor(tiempo / 60);
-      const minutos = tiempo % 60;
-      return minutos === 0 ? `${horas}h` : `${horas}h ${minutos}min`;
+    if (typeof tiempo === 'string') {
+      return tiempo;
     }
-  }
 
-  return 'Tiempo no especificado';
-}
+    if (typeof tiempo === 'number') {
+      if (tiempo < 60) {
+        return `${tiempo} min`;
+      } else {
+        const horas = Math.floor(tiempo / 60);
+        const minutos = tiempo % 60;
+        return minutos === 0 ? `${horas}h` : `${horas}h ${minutos}min`;
+      }
+    }
+
+    return 'Tiempo no especificado';
+  }
   
   viewDetails(itemId: number): void {
     this.router.navigate(['/dashboard/history', itemId]);

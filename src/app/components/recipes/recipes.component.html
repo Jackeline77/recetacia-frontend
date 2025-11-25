@@ -1,155 +1,325 @@
 <div class="p-6">
+  <!-- ========== MODO CLARO ========== -->
+  <div *ngIf="!isDarkMode">
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-                <i class="pi pi-book"></i>
-                Todas Mis Recetas
-            </h1>
-            <p class="text-gray-600">
-                Explora y busca entre todas tus recetas generadas ({{ filteredRecipes.length }})
-            </p>
+      <!-- Header - Modo Claro -->
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+          <i class="pi pi-book text-purple-600"></i>
+          Todas Mis Recetas
+        </h1>
+        <p class="text-gray-600">
+          Explora y busca entre todas tus recetas generadas ({{ filteredRecipes.length }})
+        </p>
+      </div>
+
+      <!-- Search & Filters - Modo Claro -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
+        <div class="grid md:grid-cols-3 gap-4">
+          <!-- Search Box -->
+          <div class="md:col-span-2">
+            <p-iconfield>
+              <p-inputicon class="pi pi-search text-gray-400" />
+              <input type="text" pInputText placeholder="Search" [(ngModel)]="searchTerm"
+                (ngModelChange)="applyFilters()"
+                placeholder="Buscar por nombre, ingrediente o descripción..." 
+                class="w-full border-gray-300 focus:border-purple-500" />
+            </p-iconfield>
+          </div>
+          <!-- Sort Dropdown -->
+          <p-multiselect [options]="sortOptions" [(ngModel)]="sortBy" (onChange)="applyFilters()"
+            optionLabel="label" optionValue="value" placeholder="Ordenar por" [selectionLimit]="1"
+            class="w-full">
+          </p-multiselect>
         </div>
 
-        <!-- Search & Filters -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="grid md:grid-cols-3 gap-4">
-                <!-- Search Box -->
-                <div class="md:col-span-2">
-                    <p-iconfield>
-                        <p-inputicon class="pi pi-search" />
-                        <input type="text" pInputText placeholder="Search" [(ngModel)]="searchTerm"
-                            (ngModelChange)="applyFilters()"
-                            placeholder="Buscar por nombre, ingrediente o descripción..." class="w-full" />
-                    </p-iconfield>
-                </div>
-                <!-- Sort Dropdown -->
-                <p-multiselect [options]="sortOptions" [(ngModel)]="sortBy" (onChange)="applyFilters()"
-                    optionLabel="label" optionValue="value" placeholder="Ordenar por" [selectionLimit]="1"
-                    class="w-full">
-                </p-multiselect>
-            </div>
-
-            <!-- Active Filters -->
-            <div *ngIf="searchTerm" class="mt-4 flex items-center gap-2">
-                <span class="text-sm text-gray-600">Filtros activos:</span>
-                <p-chip [label]="'Búsqueda: ' + searchTerm" [removable]="true" (onRemove)="clearSearch()">
-                </p-chip>
-            </div>
-
-            <!-- Stats -->
-            <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-3 bg-purple-50 rounded-lg">
-                    <div class="text-2xl font-bold text-purple-600">{{ allRecipes.length }}</div>
-                    <div class="text-sm text-gray-600">Total Recetas</div>
-                </div>
-                <div class="text-center p-3 bg-green-50 rounded-lg">
-                    <div class="text-2xl font-bold text-green-600">{{ favoriteRecipesCount }}</div>
-                    <div class="text-sm text-gray-600">Favoritas</div>
-                </div>
-                <div class="text-center p-3 bg-blue-50 rounded-lg">
-                    <div class="text-2xl font-bold text-blue-600">{{ historyCount }}</div>
-                    <div class="text-sm text-gray-600">Generaciones</div>
-                </div>
-                <div class="text-center p-3 bg-orange-50 rounded-lg">
-                    <div class="text-2xl font-bold text-orange-600">{{ uniqueIngredientsCount }}</div>
-                    <div class="text-sm text-gray-600">Ingredientes</div>
-                </div>
-            </div>
+        <!-- Active Filters - Modo Claro -->
+        <div *ngIf="searchTerm" class="mt-4 flex items-center gap-2">
+          <span class="text-sm text-gray-600">Filtros activos:</span>
+          <p-chip [label]="'Búsqueda: ' + searchTerm" [removable]="true" (onRemove)="clearSearch()"
+                  styleClass="bg-purple-100 text-purple-800">
+          </p-chip>
         </div>
 
-        <!-- Loading -->
-        <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let i of [1,2,3,4,5,6]" class="animate-pulse">
-                <div class="bg-white rounded-xl h-80 shadow-lg"></div>
+        <!-- Stats - Modo Claro -->
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+            <div class="text-2xl font-bold text-purple-600">{{ allRecipes.length }}</div>
+            <div class="text-sm text-gray-600">Total Recetas</div>
+          </div>
+          <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+            <div class="text-2xl font-bold text-green-600">{{ favoriteRecipesCount }}</div>
+            <div class="text-sm text-gray-600">Favoritas</div>
+          </div>
+          <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="text-2xl font-bold text-blue-600">{{ historyCount }}</div>
+            <div class="text-sm text-gray-600">Generaciones</div>
+          </div>
+          <div class="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
+            <div class="text-2xl font-bold text-orange-600">{{ uniqueIngredientsCount }}</div>
+            <div class="text-sm text-gray-600">Ingredientes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading - Modo Claro -->
+      <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="animate-pulse">
+          <div class="bg-gray-200 rounded-xl h-80 shadow-lg"></div>
+        </div>
+      </div>
+
+      <!-- Empty State - Modo Claro -->
+      <div *ngIf="!isLoading && filteredRecipes.length === 0 && !searchTerm"
+          class="text-center py-20 bg-white rounded-xl shadow-lg border border-gray-200">
+        <i class="pi pi-book text-8xl text-gray-300 mb-4"></i>
+        <h3 class="text-2xl font-semibold text-gray-600 mb-2">
+          No hay recetas todavía
+        </h3>
+        <p class="text-gray-500 mb-6">
+          Comienza generando recetas desde imágenes
+        </p>
+      </div>
+
+      <!-- No Results - Modo Claro -->
+      <div *ngIf="!isLoading && filteredRecipes.length === 0 && searchTerm"
+          class="text-center py-20 bg-white rounded-xl shadow-lg border border-gray-200">
+        <i class="pi pi-search text-8xl text-gray-300 mb-4"></i>
+        <h3 class="text-2xl font-semibold text-gray-600 mb-2">
+          No se encontraron resultados
+        </h3>
+        <p class="text-gray-500 mb-6">
+          Intenta con otros términos de búsqueda
+        </p>
+        <p-button label="Limpiar búsqueda" icon="pi pi-times" (onClick)="clearSearch()" 
+                  styleClass="p-button-secondary border-gray-300 text-gray-700 hover:bg-gray-50">
+        </p-button>
+      </div>
+
+      <!-- Recipes Grid - Modo Claro -->
+      <div *ngIf="!isLoading && filteredRecipes.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div *ngFor="let recipe of filteredRecipes"
+            class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-purple-300 p-4">
+
+          <div class="relative mb-4 rounded-lg overflow-hidden group">
+            <app-auth-image [src]="recipe.imageUrl" [alt]="recipe.nombre"
+                imageClass="w-full h-48 group-hover:scale-110 transition-transform duration-300">
+            </app-auth-image>
+
+            <!-- Favorite Badge -->
+            <button *ngIf="recipe.isFavorite"
+                class="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full shadow-lg">
+                <i class="pi pi-star-fill"></i>
+            </button>
+          </div>
+
+          <!-- Recipe Name -->
+          <h3 class="text-xl font-bold text-gray-800 mb-2">
+            {{ recipe.nombre }}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+            {{ recipe.descripcion }}
+          </p>
+
+          <!-- Time -->
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+            <i class="pi pi-clock"></i>
+            <span>{{ recipe.tiempoPreparacion }}</span>
+          </div>
+
+          <!-- Ingredients Preview -->
+          <div class="mb-4">
+            <div class="flex flex-wrap gap-1">
+              <p-chip *ngFor="let ing of recipe.ingredientes.slice(0, 3)"
+                  [label]="ing.length > 20 ? ing.substring(0, 20) + '...' : ing" 
+                  styleClass="text-xs bg-blue-50 text-blue-700 border border-blue-200">
+              </p-chip>
+              <p-chip *ngIf="recipe.ingredientes.length > 3" 
+                  [label]="'+' + (recipe.ingredientes.length - 3)"
+                  styleClass="text-xs bg-gray-100 text-gray-600">
+              </p-chip>
             </div>
-        </div>
+          </div>
 
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && filteredRecipes.length === 0 && !searchTerm"
-            class="text-center py-20 bg-white rounded-xl shadow-lg">
-            <i class="pi pi-book text-8xl text-gray-300 mb-4"></i>
-            <h3 class="text-2xl font-semibold text-gray-600 mb-2">
-                No hay recetas todavía
-            </h3>
-            <p class="text-gray-500 mb-6">
-                Comienza generando recetas desde imágenes
-            </p>
-        </div>
+          <!-- Date -->
+          <div class="text-xs text-gray-400 mb-4">
+            Generada: {{ recipe.createdAt | date:'short' }}
+          </div>
 
-        <!-- No Results -->
-        <div *ngIf="!isLoading && filteredRecipes.length === 0 && searchTerm"
-            class="text-center py-20 bg-white rounded-xl shadow-lg">
-            <i class="pi pi-search text-8xl text-gray-300 mb-4"></i>
-            <h3 class="text-2xl font-semibold text-gray-600 mb-2">
-                No se encontraron resultados
-            </h3>
-            <p class="text-gray-500 mb-6">
-                Intenta con otros términos de búsqueda
-            </p>
-            <p-button label="Limpiar búsqueda" icon="pi pi-times" (onClick)="clearSearch()" severity="secondary">
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <p-button label="Ver Receta" icon="pi pi-eye" (onClick)="viewRecipe(recipe.historyId)"
+                styleClass="p-button-sm flex-1 p-button-primary bg-blue-600 border-blue-600 hover:bg-blue-700">
             </p-button>
+          </div>
         </div>
-
-        <!-- Recipes Grid -->
-        <div *ngIf="!isLoading && filteredRecipes.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <p-card *ngFor="let recipe of filteredRecipes"
-                class="recipe-card hover:shadow-2xl transition-all duration-300">
-
-                <div class="relative mb-4 rounded-lg overflow-hidden group">
-                    <app-auth-image [src]="recipe.imageUrl" [alt]="recipe.nombre"
-                        imageClass="w-full h-48 group-hover:scale-110 transition-transform duration-300">
-                    </app-auth-image>
-
-                    <!-- Favorite Badge -->
-                    <button *ngIf="recipe.isFavorite"
-                        class="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full shadow-lg">
-                        <i class="pi pi-star-fill"></i>
-                    </button>
-                </div>
-
-                <!-- Recipe Name -->
-                <h3 class="text-xl font-bold text-gray-800 mb-2">
-                    {{ recipe.nombre }}
-                </h3>
-
-                <!-- Description -->
-                <p class="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {{ recipe.descripcion }}
-                </p>
-
-                <!-- Time -->
-                <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                    <i class="pi pi-clock"></i>
-                    <span>{{ recipe.tiempoPreparacion }}</span>
-                </div>
-
-                <!-- Ingredients Preview -->
-                <div class="mb-4">
-                    <div class="flex flex-wrap gap-1">
-                        <p-chip *ngFor="let ing of recipe.ingredientes.slice(0, 3)"
-                            [label]="ing.length > 20 ? ing.substring(0, 20) + '...' : ing" styleClass="text-xs">
-                        </p-chip>
-                        <p-chip *ngIf="recipe.ingredientes.length > 3" [label]="'+' + (recipe.ingredientes.length - 3)"
-                            styleClass="text-xs bg-gray-200">
-                        </p-chip>
-                    </div>
-                </div>
-
-                <!-- Date -->
-                <div class="text-xs text-gray-400 mb-4">
-                    Generada: {{ recipe.createdAt | date:'short' }}
-                </div>
-
-                <!-- Actions -->
-                <div class="flex gap-2">
-                    <p-button label="Ver Receta" icon="pi pi-eye" (onClick)="viewRecipe(recipe.historyId)"
-                        styleClass="p-button-sm flex-1">
-                    </p-button>
-                </div>
-            </p-card>
-        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- ========== MODO OSCURO ========== -->
+  <div *ngIf="isDarkMode">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header - Modo Oscuro -->
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+          <i class="pi pi-book text-purple-400"></i>
+          Todas Mis Recetas
+        </h1>
+        <p class="text-gray-300">
+          Explora y busca entre todas tus recetas generadas ({{ filteredRecipes.length }})
+        </p>
+      </div>
+
+      <!-- Search & Filters - Modo Oscuro -->
+      <div class="bg-gray-800 rounded-xl shadow-lg p-6 mb-8 border border-gray-700">
+        <div class="grid md:grid-cols-3 gap-4">
+          <!-- Search Box -->
+          <div class="md:col-span-2">
+            <p-iconfield>
+              <p-inputicon class="pi pi-search text-gray-400" />
+              <input type="text" pInputText placeholder="Search" [(ngModel)]="searchTerm"
+                (ngModelChange)="applyFilters()"
+                placeholder="Buscar por nombre, ingrediente o descripción..." 
+                class="w-full bg-gray-700 border-gray-600 text-white focus:border-purple-400" />
+            </p-iconfield>
+          </div>
+          <!-- Sort Dropdown -->
+          <p-multiselect [options]="sortOptions" [(ngModel)]="sortBy" (onChange)="applyFilters()"
+            optionLabel="label" optionValue="value" placeholder="Ordenar por" [selectionLimit]="1"
+            class="w-full">
+          </p-multiselect>
+        </div>
+
+        <!-- Active Filters - Modo Oscuro -->
+        <div *ngIf="searchTerm" class="mt-4 flex items-center gap-2">
+          <span class="text-sm text-gray-300">Filtros activos:</span>
+          <p-chip [label]="'Búsqueda: ' + searchTerm" [removable]="true" (onRemove)="clearSearch()"
+                  styleClass="bg-purple-900/30 text-purple-300 border border-purple-700">
+          </p-chip>
+        </div>
+
+        <!-- Stats - Modo Oscuro -->
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-3 bg-purple-900/30 rounded-lg border border-purple-700">
+            <div class="text-2xl font-bold text-purple-400">{{ allRecipes.length }}</div>
+            <div class="text-sm text-gray-300">Total Recetas</div>
+          </div>
+          <div class="text-center p-3 bg-green-900/30 rounded-lg border border-green-700">
+            <div class="text-2xl font-bold text-green-400">{{ favoriteRecipesCount }}</div>
+            <div class="text-sm text-gray-300">Favoritas</div>
+          </div>
+          <div class="text-center p-3 bg-blue-900/30 rounded-lg border border-blue-700">
+            <div class="text-2xl font-bold text-blue-400">{{ historyCount }}</div>
+            <div class="text-sm text-gray-300">Generaciones</div>
+          </div>
+          <div class="text-center p-3 bg-orange-900/30 rounded-lg border border-orange-700">
+            <div class="text-2xl font-bold text-orange-400">{{ uniqueIngredientsCount }}</div>
+            <div class="text-sm text-gray-300">Ingredientes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading - Modo Oscuro -->
+      <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="animate-pulse">
+          <div class="bg-gray-700 rounded-xl h-80 shadow-lg"></div>
+        </div>
+      </div>
+
+      <!-- Empty State - Modo Oscuro -->
+      <div *ngIf="!isLoading && filteredRecipes.length === 0 && !searchTerm"
+          class="text-center py-20 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <i class="pi pi-book text-8xl text-gray-600 mb-4"></i>
+        <h3 class="text-2xl font-semibold text-white mb-2">
+          No hay recetas todavía
+        </h3>
+        <p class="text-gray-400 mb-6">
+          Comienza generando recetas desde imágenes
+        </p>
+      </div>
+
+      <!-- No Results - Modo Oscuro -->
+      <div *ngIf="!isLoading && filteredRecipes.length === 0 && searchTerm"
+          class="text-center py-20 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <i class="pi pi-search text-8xl text-gray-600 mb-4"></i>
+        <h3 class="text-2xl font-semibold text-white mb-2">
+          No se encontraron resultados
+        </h3>
+        <p class="text-gray-400 mb-6">
+          Intenta con otros términos de búsqueda
+        </p>
+        <p-button label="Limpiar búsqueda" icon="pi pi-times" (onClick)="clearSearch()" 
+                  styleClass="p-button-secondary border-gray-600 text-gray-300 hover:bg-gray-700">
+        </p-button>
+      </div>
+
+      <!-- Recipes Grid - Modo Oscuro -->
+      <div *ngIf="!isLoading && filteredRecipes.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div *ngFor="let recipe of filteredRecipes"
+            class="bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-700 hover:border-purple-500 p-4">
+
+          <div class="relative mb-4 rounded-lg overflow-hidden group">
+            <app-auth-image [src]="recipe.imageUrl" [alt]="recipe.nombre"
+                imageClass="w-full h-48 group-hover:scale-110 transition-transform duration-300">
+            </app-auth-image>
+
+            <!-- Favorite Badge -->
+            <button *ngIf="recipe.isFavorite"
+                class="absolute top-2 right-2 bg-yellow-400 text-white p-2 rounded-full shadow-lg">
+                <i class="pi pi-star-fill"></i>
+            </button>
+          </div>
+
+          <!-- Recipe Name -->
+          <h3 class="text-xl font-bold text-white mb-2">
+            {{ recipe.nombre }}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-300 mb-4 line-clamp-2">
+            {{ recipe.descripcion }}
+          </p>
+
+          <!-- Time -->
+          <div class="flex items-center gap-2 text-sm text-gray-400 mb-3">
+            <i class="pi pi-clock"></i>
+            <span>{{ recipe.tiempoPreparacion }}</span>
+          </div>
+
+          <!-- Ingredients Preview -->
+          <div class="mb-4">
+            <div class="flex flex-wrap gap-1">
+              <p-chip *ngFor="let ing of recipe.ingredientes.slice(0, 3)"
+                  [label]="ing.length > 20 ? ing.substring(0, 20) + '...' : ing" 
+                  styleClass="text-xs bg-blue-900/30 text-blue-300 border border-blue-700">
+              </p-chip>
+              <p-chip *ngIf="recipe.ingredientes.length > 3" 
+                  [label]="'+' + (recipe.ingredientes.length - 3)"
+                  styleClass="text-xs bg-gray-700 text-gray-400">
+              </p-chip>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="text-xs text-gray-500 mb-4">
+            Generada: {{ recipe.createdAt | date:'short' }}
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <p-button label="Ver Receta" icon="pi pi-eye" (onClick)="viewRecipe(recipe.historyId)"
+                styleClass="p-button-sm flex-1 bg-blue-600 border-blue-600 hover:bg-blue-700">
+            </p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

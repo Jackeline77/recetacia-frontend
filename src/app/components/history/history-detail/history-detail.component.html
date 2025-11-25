@@ -1,139 +1,112 @@
 <div class="p-6">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-6 flex items-center justify-between">
-      <button
-        class="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold"
-        (click)="goBack()"
-      >
-        <i class="pi pi-arrow-left"></i>
-        Volver al historial
-      </button>
-    </div>
+  <!-- ========== MODO CLARO ========== -->
+  <div *ngIf="!isDarkMode">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header - Modo Claro -->
+      <div class="mb-6 flex items-center justify-between">
+        <button
+          class="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold transition-colors"
+          (click)="goBack()"
+        >
+          <i class="pi pi-arrow-left"></i>
+          Volver al historial
+        </button>
+      </div>
 
-    <div *ngIf="historyItem">
-      <!-- Recetas -->
-      <div class="lg:col-span-2">
-        <div class="space-y-3 text-left">
+      <div *ngIf="historyItem">
+        <!-- Información superior - Modo Claro -->
+        <div class="space-y-3 text-left mb-6">
           <div class="flex items-center gap-2 text-gray-600">
             <i class="pi pi-calendar"></i>
-            <span class="text-sm">{{
-              historyItem.createdAt | date : "medium"
-            }}</span>
+            <span class="text-sm">{{ historyItem.createdAt | date : "medium" }}</span>
           </div>
 
           <div class="flex items-center gap-2">
             <i class="pi pi-book text-purple-600"></i>
-            <span class="font-semibold">
+            <span class="font-semibold text-gray-800">
               {{ getRecipes().length }} Recetas Generadas
             </span>
           </div>
-
-          <p-divider></p-divider>
         </div>
-        <p-card>
+
+        <!-- Card Principal - Modo Claro -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
           <!-- Header con botón a la derecha -->
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold text-gray-800">
-              <i class="pi pi-list mr-2"></i>
+              <i class="pi pi-list mr-2 text-purple-600"></i>
               Recetas Generadas
             </h2>
 
-            <!-- Botón de favoritos -->
+            <!-- Botón de favoritos - Modo Claro -->
             <button
-              class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300"
+              class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-semibold"
               [class]="
                 historyItem.isFavorite
-                  ? 'bg-yellow-400 text-white hover:bg-yellow-500'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-yellow-400 text-white hover:bg-yellow-500 shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
               "
               (click)="toggleFavorite()"
             >
-              <i
-                [class]="
-                  historyItem.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'
-                "
-              ></i>
+              <i [class]="historyItem.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"></i>
               {{ historyItem.isFavorite ? "Favorito" : "Marcar como favorito" }}
             </button>
           </div>
 
-          <p-tabView (onChange)="onTabChange($event)" >
-            <p-tabPanel
-              *ngFor="let receta of getRecipes(); let i = index"
-              [header]="getRecipeName(receta)" 
-            >
+          <!-- Tabs - Modo Claro -->
+          <p-tabView (onChange)="onTabChange($event)">
+            <p-tabPanel *ngFor="let receta of getRecipes(); let i = index" [header]="getRecipeName(receta)">
               <div class="space-y-6">
                 <!-- Descripción -->
                 <div>
-                  <p class="text-gray-600 leading-relaxed">
+                  <p class="text-gray-600 leading-relaxed text-lg">
                     {{ getRecipeDescription(receta) }}
                   </p>
                 </div>
 
-                <p-divider></p-divider>
-
-                <!-- Tiempo de preparación -->
-                <div class="bg-purple-50 p-4 rounded-lg">
+                <!-- Tiempo de preparación - Modo Claro -->
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
                   <div class="flex items-center gap-2">
                     <i class="pi pi-clock text-purple-600 text-xl"></i>
                     <div>
                       <p class="text-sm text-gray-600">Tiempo de preparación</p>
-                      <p class="font-semibold text-purple-700">
+                      <p class="font-semibold text-purple-700 text-lg">
                         {{ getRecipeTime(receta) }} 
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <!-- Ingredientes -->
+                <!-- Ingredientes - Modo Claro -->
                 <div>
-                  <h3
-                    class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
-                  >
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <i class="pi pi-shopping-cart text-green-600"></i>
                     Ingredientes
                   </h3>
                   <ul class="grid md:grid-cols-2 gap-3">
-                    <li
-                      *ngFor="let ingrediente of getRecipeIngredients(receta)"
-                      class="flex items-start gap-2 bg-white p-3 rounded-lg shadow-sm"
-                    >
-                      <i class="pi pi-check text-green-500 mt-1"></i>
-                      <span
-                        [class.text-purple-600]="
-                          ingrediente.toLowerCase().includes('sugerido') ||
-                          ingrediente.toLowerCase().includes('suggested')
-                        "
-                      >
+                    <li *ngFor="let ingrediente of getRecipeIngredients(receta)"
+                      class="flex items-start gap-2 bg-white p-3 rounded-lg shadow-sm border border-gray-100 hover:border-green-200 transition-colors">
+                      <i class="pi pi-check text-green-500 mt-1 flex-shrink-0"></i>
+                      <span class="text-gray-700"
+                        [class.text-purple-600]="ingrediente.toLowerCase().includes('sugerido') || ingrediente.toLowerCase().includes('suggested')"
+                        [class.font-semibold]="ingrediente.toLowerCase().includes('sugerido') || ingrediente.toLowerCase().includes('suggested')">
                         {{ ingrediente }}
                       </span>
                     </li>
                   </ul>
                 </div>
 
-                <p-divider></p-divider>
-
-                <!-- Instrucciones -->
+                <!-- Instrucciones - Modo Claro -->
                 <div>
-                  <h3
-                    class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2"
-                  >
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <i class="pi pi-list-check text-blue-600"></i>
                     Instrucciones
                   </h3>
                   <ol class="space-y-4">
-                    <li
-                      *ngFor="
-                        let paso of getRecipeInstructions(receta);
-                        let j = index
-                      "
-                      class="flex gap-4 bg-white p-4 rounded-lg shadow-sm"
-                    >
+                    <li *ngFor="let paso of getRecipeInstructions(receta); let j = index"
+                      class="flex gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:border-blue-200 transition-colors">
                       <div class="flex-shrink-0">
-                        <span
-                          class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full font-bold"
-                        >
+                        <span class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full font-bold">
                           {{ j + 1 }}
                         </span>
                       </div>
@@ -144,39 +117,193 @@
                   </ol>
                 </div>
 
-                <!-- Botones de acción -->
+                <!-- Botones de acción - Modo Claro -->
                 <div class="flex gap-3 pt-4">
                   <p-button
                     label="Imprimir"
                     icon="pi pi-print"
-                    styleClass="p-button-outlined"
-                    (onClick)="printRecipe()" 
-                  >
+                    styleClass="p-button-outlined p-button-primary border-blue-600 text-blue-600 hover:bg-blue-50"
+                    (onClick)="printRecipe()">
                   </p-button>                  
                 </div>                
               </div>
             </p-tabPanel>
           </p-tabView>
-        </p-card>
+        </div>
+      </div>
+
+      <!-- Loading State - Modo Claro -->
+      <div *ngIf="isLoading" class="flex justify-center py-20">
+        <i class="pi pi-spin pi-spinner text-6xl text-purple-600"></i>
+      </div>
+
+      <!-- Error State - Modo Claro -->
+      <div *ngIf="!isLoading && !historyItem" class="text-center py-12">
+        <i class="pi pi-exclamation-triangle text-6xl text-red-300 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+          Historial no encontrado
+        </h3>
+        <p-button
+          label="Volver al Historial"
+          icon="pi pi-arrow-left"
+          (onClick)="goBack()"
+          styleClass="p-button-primary bg-blue-600 border-blue-600 hover:bg-blue-700">
+        </p-button>
       </div>
     </div>
+  </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex justify-center py-20">
-      <i class="pi pi-spin pi-spinner text-6xl text-purple-600"></i>
-    </div>
+  <!-- ========== MODO OSCURO ========== -->
+  <div *ngIf="isDarkMode">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header - Modo Oscuro -->
+      <div class="mb-6 flex items-center justify-between">
+        <button
+          class="flex items-center gap-2 text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+          (click)="goBack()"
+        >
+          <i class="pi pi-arrow-left"></i>
+          Volver al historial
+        </button>
+      </div>
 
-    <!-- Error State -->
-    <div *ngIf="!isLoading && !historyItem" class="text-center py-12">
-      <i class="pi pi-exclamation-triangle text-6xl text-red-300 mb-4"></i>
-      <h3 class="text-xl font-semibold text-gray-700 mb-2">
-        Historial no encontrado
-      </h3>
-      <p-button
-        label="Volver al Historial"
-        icon="pi pi-arrow-left"
-        (onClick)="goBack()"
-      ></p-button>
+      <div *ngIf="historyItem">
+        <!-- Información superior - Modo Oscuro -->
+        <div class="space-y-3 text-left mb-6">
+          <div class="flex items-center gap-2 text-gray-400">
+            <i class="pi pi-calendar"></i>
+            <span class="text-sm">{{ historyItem.createdAt | date : "medium" }}</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <i class="pi pi-book text-purple-400"></i>
+            <span class="font-semibold text-white">
+              {{ getRecipes().length }} Recetas Generadas
+            </span>
+          </div>
+        </div>
+
+        <!-- Card Principal - Modo Oscuro -->
+        <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-6">
+          <!-- Header con botón a la derecha -->
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white">
+              <i class="pi pi-list mr-2 text-purple-400"></i>
+              Recetas Generadas
+            </h2>
+
+            <!-- Botón de favoritos - Modo Oscuro -->
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-semibold"
+              [class]="
+                historyItem.isFavorite
+                  ? 'bg-yellow-400 text-white hover:bg-yellow-500 shadow-md'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
+              "
+              (click)="toggleFavorite()"
+            >
+              <i [class]="historyItem.isFavorite ? 'pi pi-star-fill' : 'pi pi-star'"></i>
+              {{ historyItem.isFavorite ? "Favorito" : "Marcar como favorito" }}
+            </button>
+          </div>
+
+          <!-- Tabs - Modo Oscuro -->
+          <p-tabView (onChange)="onTabChange($event)">
+            <p-tabPanel *ngFor="let receta of getRecipes(); let i = index" [header]="getRecipeName(receta)">
+              <div class="space-y-6">
+                <!-- Descripción -->
+                <div>
+                  <p class="text-gray-300 leading-relaxed text-lg">
+                    {{ getRecipeDescription(receta) }}
+                  </p>
+                </div>
+
+                <!-- Tiempo de preparación - Modo Oscuro -->
+                <div class="bg-purple-900/30 p-4 rounded-lg border border-purple-800">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-clock text-purple-400 text-xl"></i>
+                    <div>
+                      <p class="text-sm text-gray-400">Tiempo de preparación</p>
+                      <p class="font-semibold text-purple-300 text-lg">
+                        {{ getRecipeTime(receta) }} 
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ingredientes - Modo Oscuro -->
+                <div>
+                  <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="pi pi-shopping-cart text-green-400"></i>
+                    Ingredientes
+                  </h3>
+                  <ul class="grid md:grid-cols-2 gap-3">
+                    <li *ngFor="let ingrediente of getRecipeIngredients(receta)"
+                      class="flex items-start gap-2 bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-600 hover:border-green-500 transition-colors">
+                      <i class="pi pi-check text-green-500 mt-1 flex-shrink-0"></i>
+                      <span class="text-gray-300"
+                        [class.text-purple-400]="ingrediente.toLowerCase().includes('sugerido') || ingrediente.toLowerCase().includes('suggested')"
+                        [class.font-semibold]="ingrediente.toLowerCase().includes('sugerido') || ingrediente.toLowerCase().includes('suggested')">
+                        {{ ingrediente }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Instrucciones - Modo Oscuro -->
+                <div>
+                  <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                    <i class="pi pi-list-check text-blue-400"></i>
+                    Instrucciones
+                  </h3>
+                  <ol class="space-y-4">
+                    <li *ngFor="let paso of getRecipeInstructions(receta); let j = index"
+                      class="flex gap-4 bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-600 hover:border-blue-500 transition-colors">
+                      <div class="flex-shrink-0">
+                        <span class="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full font-bold">
+                          {{ j + 1 }}
+                        </span>
+                      </div>
+                      <p class="flex-1 text-gray-300 leading-relaxed">
+                        {{ paso }}
+                      </p>
+                    </li>
+                  </ol>
+                </div>
+
+                <!-- Botones de acción - Modo Oscuro -->
+                <div class="flex gap-3 pt-4">
+                  <p-button
+                    label="Imprimir"
+                    icon="pi pi-print"
+                    styleClass="p-button-outlined border-gray-600 text-gray-300 hover:bg-gray-700"
+                    (onClick)="printRecipe()">
+                  </p-button>                  
+                </div>                
+              </div>
+            </p-tabPanel>
+          </p-tabView>
+        </div>
+      </div>
+
+      <!-- Loading State - Modo Oscuro -->
+      <div *ngIf="isLoading" class="flex justify-center py-20">
+        <i class="pi pi-spin pi-spinner text-6xl text-purple-400"></i>
+      </div>
+
+      <!-- Error State - Modo Oscuro -->
+      <div *ngIf="!isLoading && !historyItem" class="text-center py-12">
+        <i class="pi pi-exclamation-triangle text-6xl text-red-400 mb-4"></i>
+        <h3 class="text-xl font-semibold text-white mb-2">
+          Historial no encontrado
+        </h3>
+        <p-button
+          label="Volver al Historial"
+          icon="pi pi-arrow-left"
+          (onClick)="goBack()"
+          styleClass="bg-blue-600 border-blue-600 hover:bg-blue-700">
+        </p-button>
+      </div>
     </div>
   </div>
 </div>

@@ -137,7 +137,7 @@ export class RegisterComponent {
           '',
           [
             Validators.required,
-            Validators.minLength(6),
+            Validators.minLength(8),
             Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$'),
           ],
         ],
@@ -191,19 +191,32 @@ onSubmit() {
     password: this.registerForm.value.password
   };
 
-  this.authService.register(userData).subscribe({
+this.authService.register(userData).subscribe({
     next: (response) => {
       console.log('✅ Registro exitoso', response);
       this.isLoading = false;
-      // El AuthService ya guarda el token automáticamente
       this.router.navigate(['/dashboard']);
     },
     error: (error) => {
       console.error('❌ Error en registro:', error);
+      console.error('❌ Error completo:', error.error);
       this.isLoading = false;
       
-      if (error.status === 400) {
-        this.errorMessage = 'El email ya está registrado';
+      // ✅ MEJORADO: Manejo específico de errores de validación
+      if (error.status === 400 || error.status === 409) {
+        // Error de validación o conflicto
+        const errorMsg = error.error?.message;
+        
+        if (errorMsg && errorMsg.includes('email')) {
+          this.errorMessage = 'El email ya está registrado';
+        } else if (errorMsg && errorMsg.includes('password')) {
+          this.errorMessage = 'La contraseña debe tener al menos 8 caracteres';
+        } else if (Array.isArray(error.error?.message)) {
+          // Si el backend devuelve un array de errores
+          this.errorMessage = error.error.message.join(', ');
+        } else {
+          this.errorMessage = errorMsg || 'Datos de registro inválidos';
+        }
       } else if (error.status === 500) {
         this.errorMessage = 'Error del servidor. Intenta más tarde';
       } else if (error.status === 0) {

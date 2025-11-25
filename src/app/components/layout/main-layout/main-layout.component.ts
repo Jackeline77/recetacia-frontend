@@ -37,6 +37,7 @@ export class MainLayoutComponent implements OnInit {
   sidebarVisible = false;
   userName = 'Usuario';
   userEmail = 'usuario@ejemplo.com';
+  isDarkMode = false;
 
   // Menú principal de navegación
   menuItems: CustomMenuItem[] = [
@@ -69,21 +70,59 @@ export class MainLayoutComponent implements OnInit {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-    // Puedes cargar datos del usuario aquí
-    // this.loadUserProfile();
+  // Método para obtener las clases del icono (Desktop)
+  getIconClasses(item: CustomMenuItem): string {
+    const baseClasses = item.icon + ' icon-extra-large transition-colors duration-300';
+    
+    if (this.isSelected(item)) {
+      return baseClasses + ' text-white';
+    } else {
+      return baseClasses + (this.isDarkMode ? ' text-gray-300' : ' text-primary-800');
+    }
   }
 
-  // Ruta seleccionada por click (persistente hasta seleccionar otra)
+  // Método para obtener las clases del icono (Mobile)
+  getMobileIconClasses(item: CustomMenuItem): string {
+    const baseClasses = item.icon + ' text-lg transition-colors duration-300';
+    
+    if (this.isSelected(item)) {
+      return baseClasses + (this.isDarkMode ? ' text-white' : ' text-amber-900');
+    } else {
+      return baseClasses + (this.isDarkMode ? ' text-gray-400' : ' text-amber-700');
+    }
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    this.applyTheme();
+    // Guardar preferencia en localStorage
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+  }
+
+  ngOnInit(): void {
+    const savedTheme = localStorage.getItem('theme');
+    this.isDarkMode = savedTheme === 'dark';
+    this.applyTheme();
+  }
+
+  // ✅ Método para aplicar el tema actual
+  private applyTheme(): void {
+    const element = document.querySelector('html');
+    if (element !== null) {
+      if (this.isDarkMode) {
+        element.classList.add('dark');
+      } else {
+        element.classList.remove('dark');
+      }
+    }
+  }
+
   selectedRoute: string | null = null;
 
-  // Selecciona la opción del menú al hacer click
   selectMenu(item: CustomMenuItem | undefined): void {
     if (!item || !item.route) return;
     this.selectedRoute = item.route;
-    // Navega a la ruta (routerLink también lo hará), pero aseguramos la navegación programática
     this.router.navigate([item.route]);
-    // Cerrar sidebar en caso de mobile
     this.sidebarVisible = false;
   }
 

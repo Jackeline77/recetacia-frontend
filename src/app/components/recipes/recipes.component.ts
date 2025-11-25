@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -45,12 +45,14 @@ interface RecipeWithHistory extends Recipe {
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
 })
-export class RecipesComponent implements OnInit {
+export class RecipesComponent implements OnInit, OnDestroy {
   allRecipes: RecipeWithHistory[] = [];
   filteredRecipes: RecipeWithHistory[] = [];
   isLoading = false;
   searchTerm = '';
-  sortBy: string[] = ['newest']; // Cambiado a array para multiselect
+  sortBy: string[] = ['newest'];
+  isDarkMode = false;
+  private mutationObserver?: MutationObserver;
 
   sortOptions = [
     { label: 'Más Recientes', value: 'newest' },
@@ -63,6 +65,37 @@ export class RecipesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAllRecipes();
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios de clase en el html
+    this.mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      this.mutationObserver.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
   }
 
   loadAllRecipes(): void {
@@ -73,12 +106,10 @@ export class RecipesComponent implements OnInit {
         this.allRecipes = [];
 
         historyItems.forEach((item: any) => {
-          // ✅ Obtener la URL de la imagen correctamente
           const historyImageUrl = item.imageUrl || `http://localhost:3000/history/image/${item.id}`;
 
           console.log('🖼️ Item ID:', item.id, 'URL:', historyImageUrl);
 
-          // ✅ Manejar tanto español (recetas) como inglés (recipes)
           const recipes = item.generation?.recetas || item.generation?.recipes || [];
 
           if (recipes.length === 0) {
@@ -87,7 +118,6 @@ export class RecipesComponent implements OnInit {
 
           recipes.forEach((receta: any) => {
             this.allRecipes.push({
-              // ✅ Manejar tanto español como inglés
               nombre: receta.nombre || receta.title || 'Receta sin nombre',
               descripcion: receta.descripcion || receta.description || 'Sin descripción',
               ingredientes: receta.ingredientes || receta.ingredients || [],
@@ -97,7 +127,7 @@ export class RecipesComponent implements OnInit {
                 (receta.prep_time_minutes ? `${receta.prep_time_minutes} minutos` : 'Tiempo no especificado'),
               historyId: item.id,
               createdAt: item.createdAt,
-              imageUrl: historyImageUrl, // ✅ URL correcta
+              imageUrl: historyImageUrl,
               isFavorite: item.isFavorite,
             });
           });
@@ -129,6 +159,8 @@ export class RecipesComponent implements OnInit {
           recipe.ingredientes.some((ing) => ing.toLowerCase().includes(term))
       );
     }
+
+    // Aplicar ordenamiento
     if (this.sortBy && this.sortBy.length > 0) {
       const primarySort = this.sortBy[0]; 
       

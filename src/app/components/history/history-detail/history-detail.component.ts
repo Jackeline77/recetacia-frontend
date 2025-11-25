@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -28,8 +28,7 @@ import { LoadingService } from '../../../services/loading.service';
   templateUrl: './history-detail.component.html',
   styleUrl: './history-detail.component.css'
 })
-
-export class HistoryDetailComponent implements OnInit {
+export class HistoryDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private historyService = inject(HistoryService);
@@ -39,9 +38,50 @@ export class HistoryDetailComponent implements OnInit {
   historyItem: any = null;
   isLoading = true;
   currentRecipeIndex = 0;
+  isDarkMode = false;
+  private themeChangeListener?: () => void;
+  private mutationObserver?: MutationObserver;
 
   ngOnInit(): void {
     this.loadHistoryDetail();
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeChangeListener) {
+      window.removeEventListener('storage', this.themeChangeListener);
+    }
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios en localStorage
+    this.themeChangeListener = () => this.checkDarkMode();
+    window.addEventListener('storage', this.themeChangeListener);
+    
+    // Escuchar cambios de clase en el html
+    this.mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      this.mutationObserver.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
   }
 
   loadHistoryDetail(): void {
@@ -59,7 +99,6 @@ export class HistoryDetailComponent implements OnInit {
 
     this.isLoading = true;
 
-    // Obtener todos los items del historial y filtrar por ID
     this.historyService.getHistory(1).subscribe({
       next: (historyItems) => {
         const item = historyItems.find((item: any) => item.id === +historyId);
@@ -117,40 +156,33 @@ export class HistoryDetailComponent implements OnInit {
   }
 
   // Método seguro para obtener tiempo de preparación - maneja español e inglés
-  //getRecipeTime(recipe: any): string {
-  //  return recipe?.tiempoPreparacion ||
-  //    (recipe?.prep_time_minutes ? `${recipe.prep_time_minutes} minutos` : 'Tiempo no especificado');
-  //}
-  // Método seguro para obtener tiempo de preparación - maneja español e inglés
-getRecipeTime(recipe: any): string {
-  const tiempo = recipe?.tiempoPreparacion || 
-                recipe?.prep_time_minutes || 
-                recipe?.preparation_time;
-  
-  if (!tiempo) return 'Tiempo no especificado';
-  
-  // Si ya es un string con formato, devolverlo tal cual
-  if (typeof tiempo === 'string') {
-    return tiempo;
-  }
-  
-  // Si es un número (minutos), formatearlo
-  if (typeof tiempo === 'number') {
-    if (tiempo < 60) {
-      return `${tiempo} minutos`;
-    } else {
-      const horas = Math.floor(tiempo / 60);
-      const minutos = tiempo % 60;
-      if (minutos === 0) {
-        return `${horas} hora${horas > 1 ? 's' : ''}`;
+  getRecipeTime(recipe: any): string {
+    const tiempo = recipe?.tiempoPreparacion || 
+                  recipe?.prep_time_minutes || 
+                  recipe?.preparation_time;
+    
+    if (!tiempo) return 'Tiempo no especificado';
+    
+    if (typeof tiempo === 'string') {
+      return tiempo;
+    }
+    
+    if (typeof tiempo === 'number') {
+      if (tiempo < 60) {
+        return `${tiempo} minutos`;
       } else {
-        return `${horas} hora${horas > 1 ? 's' : ''} y ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+        const horas = Math.floor(tiempo / 60);
+        const minutos = tiempo % 60;
+        if (minutos === 0) {
+          return `${horas} hora${horas > 1 ? 's' : ''}`;
+        } else {
+          return `${horas} hora${horas > 1 ? 's' : ''} y ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+        }
       }
     }
+    
+    return 'Tiempo no especificado';
   }
-  
-  return 'Tiempo no especificado';
-}
 
   goBack(): void {
     this.router.navigate(['/dashboard/history']);
@@ -179,15 +211,13 @@ getRecipeTime(recipe: any): string {
     });
   }
 
-  // Método para imprimir la receta actual
-  // Método para imprimir la receta actual
+  // Método para imprimir la receta actual (se mantiene igual)
   printRecipe(): void {
     if (!this.historyItem || this.getRecipes().length === 0) return;
 
     const currentRecipe = this.getRecipes()[this.currentRecipeIndex];
     if (!currentRecipe) return;
 
-    // Obtener todos los datos necesarios antes de crear el template
     const recipeName = this.getRecipeName(currentRecipe);
     const recipeDescription = this.getRecipeDescription(currentRecipe);
     const recipeTime = this.getRecipeTime(currentRecipe);
@@ -196,7 +226,6 @@ getRecipeTime(recipe: any): string {
     const generationDate = new Date(this.historyItem.createdAt).toLocaleDateString();
     const currentDate = new Date().toLocaleDateString();
 
-    // Crear contenido HTML para imprimir
     const printContent = `
     <div class="header">
       <h1 class="recipe-title">${recipeName}</h1>
@@ -230,7 +259,6 @@ getRecipeTime(recipe: any): string {
     </div>
   `;
 
-    // Crear ventana de impresión
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (!printWindow) {
       this.messageService.add({
@@ -342,7 +370,6 @@ getRecipeTime(recipe: any): string {
           <button onclick="window.close()" style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Cerrar</button>
         </div>
         <script>
-          // Auto-print
           setTimeout(() => {
             window.print();
           }, 500);
@@ -353,7 +380,8 @@ getRecipeTime(recipe: any): string {
 
     printWindow.document.close();
   }
-    // Método para manejar cambio de pestaña
+
+  // Método para manejar cambio de pestaña
   onTabChange(event: any): void {
     this.currentRecipeIndex = event.index;
     console.log('📑 Cambiando a receta:', this.currentRecipeIndex);
