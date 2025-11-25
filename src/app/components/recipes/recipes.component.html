@@ -16,17 +16,23 @@
             <div class="grid md:grid-cols-3 gap-4">
                 <!-- Search Box -->
                 <div class="md:col-span-2">
-                    <span class="p-input-icon-left w-full">
-                        <i class="pi pi-search"></i>
-                        <input type="text" pInputText [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+                    <p-iconfield>
+                        <p-inputicon class="pi pi-search" />
+                        <input type="text" pInputText placeholder="Search" [(ngModel)]="searchTerm"
+                            (ngModelChange)="applyFilters()"
                             placeholder="Buscar por nombre, ingrediente o descripción..." class="w-full" />
-                    </span>
+                    </p-iconfield>
                 </div>
-
                 <!-- Sort Dropdown -->
+                <p-multiselect [options]="sortOptions" [(ngModel)]="sortBy" (onChange)="applyFilters()"
+                    optionLabel="label" optionValue="value" placeholder="Ordenar por" [selectionLimit]="1"
+                    class="w-full">
+                </p-multiselect>
+
                 <p-dropdown [(ngModel)]="sortBy" [options]="sortOptions" (onChange)="applyFilters()" optionLabel="label"
                     optionValue="value" placeholder="Ordenar por" class="w-full">
                 </p-dropdown>
+
             </div>
 
             <!-- Active Filters -->
@@ -97,10 +103,10 @@
             <p-card *ngFor="let recipe of filteredRecipes"
                 class="recipe-card hover:shadow-2xl transition-all duration-300">
 
-                <!-- Image -->
                 <div class="relative mb-4 rounded-lg overflow-hidden group">
-                    <img [src]="recipe.imageUrl" [alt]="recipe.nombre"
-                        class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                    <app-auth-image [src]="recipe.imageUrl" [alt]="recipe.nombre"
+                        imageClass="w-full h-48 group-hover:scale-110 transition-transform duration-300">
+                    </app-auth-image>
 
                     <!-- Favorite Badge -->
                     <button *ngIf="recipe.isFavorite"

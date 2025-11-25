@@ -14,6 +14,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ChipModule } from 'primeng/chip';
 import { DataViewModule } from 'primeng/dataview';
 import { AuthImageComponent } from '../shared/auth-image/auth-image.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 interface RecipeWithHistory extends Recipe {
   historyId: number;
@@ -24,6 +27,7 @@ interface RecipeWithHistory extends Recipe {
 
 @Component({
   selector: 'app-recipes',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -33,6 +37,10 @@ interface RecipeWithHistory extends Recipe {
     DropdownModule,
     ChipModule,
     DataViewModule,
+    AuthImageComponent,
+    InputIconModule,
+    IconFieldModule,
+    MultiSelectModule,
   ],
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css',
@@ -42,7 +50,7 @@ export class RecipesComponent implements OnInit {
   filteredRecipes: RecipeWithHistory[] = [];
   isLoading = false;
   searchTerm = '';
-  sortBy = 'newest';
+  sortBy: string[] = ['newest']; // Cambiado a array para multiselect
 
   sortOptions = [
     { label: 'Más Recientes', value: 'newest' },
@@ -51,7 +59,7 @@ export class RecipesComponent implements OnInit {
     { label: 'Nombre Z-A', value: 'name-desc' },
   ];
 
-  constructor(private historyService: HistoryService, private router: Router) {}
+  constructor(private historyService: HistoryService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadAllRecipes();
@@ -62,36 +70,42 @@ export class RecipesComponent implements OnInit {
 
     this.historyService.getHistory(1).subscribe({
       next: (historyItems) => {
-        // Extraer todas las recetas de todos los items del historial
         this.allRecipes = [];
 
         historyItems.forEach((item: any) => {
+          // ✅ Obtener la URL de la imagen correctamente
+          const historyImageUrl = item.imageUrl || `http://localhost:3000/history/image/${item.id}`;
+
+          console.log('🖼️ Item ID:', item.id, 'URL:', historyImageUrl);
+
           // ✅ Manejar tanto español (recetas) como inglés (recipes)
-          const recipes =
-            item.generation?.recetas || item.generation?.recipes || [];
+          const recipes = item.generation?.recetas || item.generation?.recipes || [];
+
+          if (recipes.length === 0) {
+            console.warn('⚠️ No se encontraron recetas en item:', item.id);
+          }
 
           recipes.forEach((receta: any) => {
             this.allRecipes.push({
               // ✅ Manejar tanto español como inglés
               nombre: receta.nombre || receta.title || 'Receta sin nombre',
-              descripcion:
-                receta.descripcion || receta.description || 'Sin descripción',
+              descripcion: receta.descripcion || receta.description || 'Sin descripción',
               ingredientes: receta.ingredientes || receta.ingredients || [],
               instrucciones: receta.instrucciones || receta.instructions || [],
-              tiempoPreparacion:
+              tiempoPreparacion: receta.tiempoPreparacion ||
                 receta.tiempoPreparacion ||
-                (receta.prep_time_minutes
-                  ? `${receta.prep_time_minutes} minutos`
-                  : 'Tiempo no especificado'),
+                (receta.prep_time_minutes ? `${receta.prep_time_minutes} minutos` : 'Tiempo no especificado'),
               historyId: item.id,
               createdAt: item.createdAt,
-              imageUrl: item.imageUrl,
+              imageUrl: historyImageUrl, // ✅ URL correcta
               isFavorite: item.isFavorite,
             });
           });
         });
 
-        console.log('✅ Todas las recetas cargadas:', this.allRecipes.length);
+        console.log('✅ Total de recetas cargadas:', this.allRecipes.length);
+        console.log('📸 URLs únicas de imágenes:', [...new Set(this.allRecipes.map(r => r.imageUrl))]);
+
         this.applyFilters();
         this.isLoading = false;
       },
@@ -115,27 +129,29 @@ export class RecipesComponent implements OnInit {
           recipe.ingredientes.some((ing) => ing.toLowerCase().includes(term))
       );
     }
-
-    // Aplicar ordenamiento
-    switch (this.sortBy) {
-      case 'newest':
-        result.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case 'oldest':
-        result.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        break;
-      case 'name-asc':
-        result.sort((a, b) => a.nombre.localeCompare(b.nombre));
-        break;
-      case 'name-desc':
-        result.sort((a, b) => b.nombre.localeCompare(a.nombre));
-        break;
+    if (this.sortBy && this.sortBy.length > 0) {
+      const primarySort = this.sortBy[0]; 
+      
+      switch (primarySort) {
+        case 'newest':
+          result.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          break;
+        case 'oldest':
+          result.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          break;
+        case 'name-asc':
+          result.sort((a, b) => a.nombre.localeCompare(b.nombre));
+          break;
+        case 'name-desc':
+          result.sort((a, b) => b.nombre.localeCompare(a.nombre));
+          break;
+      }
     }
 
     this.filteredRecipes = result;
@@ -170,12 +186,5 @@ export class RecipesComponent implements OnInit {
       );
     });
     return allIngredients.size;
-  }
-
-  // Método para obtener preview de ingredientes
-  getIngredientsPreview(ingredients: string[]): string {
-    return (
-      ingredients.slice(0, 3).join(', ') + (ingredients.length > 3 ? '...' : '')
-    );
   }
 }

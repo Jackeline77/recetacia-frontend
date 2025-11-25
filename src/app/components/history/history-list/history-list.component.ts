@@ -103,15 +103,45 @@ export class HistoryListComponent implements OnInit {
   }
 
   // Método seguro para obtener tiempo de preparación - maneja español e inglés
-  getRecipeTime(recipe: any): string {
-    return (
-      recipe?.tiempoPreparacion ||
-      (recipe?.prep_time_minutes
-        ? `${recipe.prep_time_minutes} minutos`
-        : 'Tiempo no especificado')
-    );
+  //getRecipeTime(recipe: any): string {
+  //  return (
+  //    recipe?.tiempoPreparacion ||
+  //    (recipe?.prep_time_minutes
+  //      ? `${recipe.prep_time_minutes} minutos`
+  //      : 'Tiempo no especificado')
+  //  );
+  //}
+// Método seguro para obtener tiempo de preparación - versión simplificada
+getRecipeTime(recipe: any): string {
+  if (!recipe) return 'Tiempo no especificado';
+
+  // Buscar en propiedades de tiempo
+  const tiempo = recipe.tiempoPreparacion || 
+                recipe.prep_time_minutes || 
+                recipe.preparation_time;
+
+  // Si no hay tiempo, retornar mensaje por defecto
+  if (!tiempo) return 'Tiempo no especificado';
+
+  // Si ya es un string con formato, usarlo directamente
+  if (typeof tiempo === 'string') {
+    return tiempo;
   }
 
+  // Si es número, formatearlo
+  if (typeof tiempo === 'number') {
+    if (tiempo < 60) {
+      return `${tiempo} min`;
+    } else {
+      const horas = Math.floor(tiempo / 60);
+      const minutos = tiempo % 60;
+      return minutos === 0 ? `${horas}h` : `${horas}h ${minutos}min`;
+    }
+  }
+
+  return 'Tiempo no especificado';
+}
+  
   viewDetails(itemId: number): void {
     this.router.navigate(['/dashboard/history', itemId]);
   }
