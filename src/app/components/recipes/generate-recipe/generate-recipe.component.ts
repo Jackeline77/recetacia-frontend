@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -14,19 +14,20 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './generate-recipe.component.html',
   styles: [],
 })
-export class GenerateRecipeComponent implements OnDestroy {
+export class GenerateRecipeComponent implements OnInit, OnDestroy {
   @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvas') canvasElement!: ElementRef<HTMLCanvasElement>;
 
   selectedFile: File | null = null;
   imagePreview: string | null = null;
   suggestIngredients: boolean = false;
-  isLoading: boolean = false; // For API call
-  isProcessingCapture: boolean = false; // For Camera Capture processing
+  isLoading: boolean = false;
+  isProcessingCapture: boolean = false;
   isDragging: boolean = false;
-
   isCameraOpen: boolean = false;
+  isDarkMode: boolean = false;
   stream: MediaStream | null = null;
+  private mutationObserver?: MutationObserver;
 
   constructor(
     private recipeService: RecipeService,
@@ -34,8 +35,39 @@ export class GenerateRecipeComponent implements OnDestroy {
     private messageService: MessageService
   ) {}
 
+  ngOnInit() {
+    this.checkDarkMode();
+    this.setupThemeListener();
+  }
+
   ngOnDestroy() {
     this.stopCamera();
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+  }
+
+  setupThemeListener(): void {
+    // Escuchar cambios de clase en el html
+    this.mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          this.checkDarkMode();
+        }
+      });
+    });
+    
+    const htmlElement = document.querySelector('html');
+    if (htmlElement) {
+      this.mutationObserver.observe(htmlElement, { attributes: true });
+    }
+  }
+
+  checkDarkMode(): void {
+    const htmlElement = document.querySelector('html');
+    this.isDarkMode = htmlElement?.classList.contains('dark') || 
+                     localStorage.getItem('theme') === 'dark' ||
+                     localStorage.getItem('darkMode') === 'true';
   }
 
   onFileSelected(event: any) {
@@ -43,7 +75,6 @@ export class GenerateRecipeComponent implements OnDestroy {
     if (file) this.processFile(file);
   }
 
-  // ... Drag and Drop methods remain the same ...
   onDragOver(event: DragEvent) {
     event.preventDefault();
     this.isDragging = true;
@@ -62,7 +93,6 @@ export class GenerateRecipeComponent implements OnDestroy {
     }
   }
 
-  // Updated processFile to accept an optional callback
   processFile(file: File, onComplete?: () => void) {
     if (file && file.type.match(/image\/*/) !== null) {
       if (file.size > 5 * 1024 * 1024) {
@@ -71,7 +101,7 @@ export class GenerateRecipeComponent implements OnDestroy {
           summary: 'Error',
           detail: 'La imagen no debe superar los 5MB',
         });
-        if (onComplete) onComplete(); // Ensure cleanup happens even on error
+        if (onComplete) onComplete();
         return;
       }
 
@@ -80,7 +110,6 @@ export class GenerateRecipeComponent implements OnDestroy {
 
       reader.onload = (e) => {
         this.imagePreview = reader.result as string;
-        // If a callback was passed (from camera), execute it now that preview is ready
         if (onComplete) onComplete();
       };
 
@@ -131,13 +160,11 @@ export class GenerateRecipeComponent implements OnDestroy {
   capturePhoto() {
     if (!this.videoElement || !this.canvasElement) return;
 
-    // 1. Show loading state
     this.isProcessingCapture = true;
 
     const video = this.videoElement.nativeElement;
     const canvas = this.canvasElement.nativeElement;
 
-    // 2. Freeze the video visually so the user sees what they captured
     video.pause();
 
     canvas.width = video.videoWidth;
@@ -153,15 +180,13 @@ export class GenerateRecipeComponent implements OnDestroy {
             type: 'image/jpeg',
           });
 
-          // 3. Process the file and wait for the preview to be ready
           this.processFile(file, () => {
-            // 4. Only stop the camera UI once the preview is effectively loaded
             this.stopCamera();
             this.isProcessingCapture = false;
           });
         } else {
           this.isProcessingCapture = false;
-          video.play(); // Resume if failed
+          video.play();
         }
       },
       'image/jpeg',
